@@ -39,15 +39,18 @@
 		-->
 	</target>
 
-	<target name="run.deps" depends="artifact.deps">
+	<target name="install.deps" depends="artifact.deps">
 		<fail message="param 'scope' undefined" unless="scope"/>
-		<fail message="param 'mainclass' undefined" unless="mainclass"/>
 
 		<artifact:dependencies pathId="deps.path">
 			<dependency groupId="${groupId}" artifactId="${artifactId}" version="${version}" scope="${scope}"/>
 		</artifact:dependencies>
 		<!-- http://stackoverflow.com/questions/2430445/is-it-possible-to-have-ant-print-out-the-classpath-for-a-particular-target-if-s -->
 		<pathconvert property="deps.path.prop" refid="deps.path"/>
+	</target>
+
+	<target name="run.deps" depends="install.deps">
+		<fail message="param 'mainclass' undefined" unless="mainclass"/>
 	</target>
 
 	<target name="run" depends="exit-if-not-installed, run.deps" description="Executes the mainclass of an application">
@@ -107,7 +110,7 @@
 		<fail message="artifact ${groupId}:${artifactId}:${version} not installed" unless="is.installed"/>
 	</target>
 
-	<target name="install" depends="run.deps" description="Installs (downloads into local repo) the artifact">
+	<target name="install" depends="install.deps" description="Installs (downloads into local repo) the artifact">
 		<artifact:mvn>
 			<arg value="org.apache.maven.plugins:maven-dependency-plugin:2.1:get"/>
 			<!-- <arg value="dependency:get"/> -->

@@ -49,3 +49,24 @@ You mmay search for jetty runner artifacts in
 [maven central](http://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22org.eclipse.jetty%22%20AND%20a%3A%22jetty-runner%22)
 or [mvnrepository.com](http://mvnrepository.com/artifact/org.eclipse.jetty/jetty-runner)
 
+### javadev/calc
+
+Install calc:
+`ant -DgroupId=com.github.javadev -DartifactId=calc -Dversion=1.0 install`
+
+Run calc:
+`ant -DgroupId=com.github.javadev -DartifactId=calc -Dversion=1.0 -Dmainclass=com.github.calc.Calc run`
+
+### Microemu
+
+Install microemulator:
+`ant -DgroupId=org.microemu -DartifactId=microemulator-app-swing -Dversion=2.0.0 install`
+
+Run microemulator:
+`ant -DgroupId=org.microemu -DartifactId=microemulator-app-swing -Dversion=2.0.0 -Dmainclass=org.microemu.app.Main run`
+
+
+end notes
+------
+
+License: [Apache License, v2.0](http://www.apache.org/licenses/LICENSE-2.0)
