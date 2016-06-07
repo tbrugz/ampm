@@ -1,0 +1,144 @@
+<project name="mvnrun" basedir="." default="info"
+	xmlns:ivy="antlib:org.apache.ivy.ant" xmlns:artifact="antlib:org.apache.maven.artifact.ant">
+
+	<property environment="env"/>
+
+	<property name="maven.dir" location="${user.home}/.m2"/>
+	<property name="maven.repo.dir" location="${maven.dir}/repository"/>
+
+	<property name="maven.repo.central" value="http://download.java.net/maven/2/"/>
+
+	<!--
+	<property name="groupId"/>
+	<property name="artifactId"/>
+	<property name="version"/>
+	-->
+	<property name="scope" value="runtime"/>
+	<!-- <property name="run.mainclass"/> -->
+	<!-- java.ext.dirs: extra jars - jdbc drivers, ... -->
+
+	<property name="executables.dir" value="${user.home}/bin"/>
+
+	<target name="info" description="Show basic info">
+		<echo message="maven.dir: ${maven.dir}"/>
+		<echo message="maven.repo.dir: ${maven.repo.dir}"/>
+		<echo message="maven.repo.central: ${maven.repo.central}"/>
+		<echo message="executables.dir: ${executables.dir}"/>
+
+		<echo message=""/>
+		<echo message="for main targets, run `ant -projecthelp`"/>
+	</target>
+
+	<target name="artifact.deps">
+		<fail message="param 'groupId' undefined" unless="groupId"/>
+		<fail message="param 'artifactId' undefined" unless="artifactId"/>
+		<fail message="param 'version' undefined" unless="version"/>
+		<!--
+		option to use 'artifact'?
+		http://maven.apache.org/plugins/maven-dependency-plugin/get-mojo.html
+		-->
+	</target>
+
+	<target name="run.deps" depends="artifact.deps">
+		<fail message="param 'scope' undefined" unless="scope"/>
+		<fail message="param 'mainclass' undefined" unless="mainclass"/>
+
+		<artifact:dependencies pathId="deps.path">
+			<dependency groupId="${groupId}" artifactId="${artifactId}" version="${version}" scope="${scope}"/>
+		</artifact:dependencies>
+		<!-- http://stackoverflow.com/questions/2430445/is-it-possible-to-have-ant-print-out-the-classpath-for-a-particular-target-if-s -->
+		<pathconvert property="deps.path.prop" refid="deps.path"/>
+	</target>
+
+	<target name="run" depends="exit-if-not-installed, run.deps" description="Executes the mainclass of an application">
+		<echo message="path: ${deps.path.prop}"/>
+		<!-- TODO: option of no ant "debug info" - not good for cli apps -->
+		<!-- TODO: extract mainclass from jar -->
+
+		<!-- java -Djava.ext.dirs="$M2_REPO"/sqlline/sqlline/1.1.9:"$M2_REPO"/jline/jline/2.10:/home/tbrugz/Desktop/java/jars-etc/libs-jdbc sqlline.SqlLine -->
+		<!-- mvnrun$ ant -DgroupId=sqlline -DartifactId=sqlline -Dversion=1.1.9 -Dmainclass=sqlline.SqlLine run -->
+		<!-- java -Djava.ext.dirs=$BINPATH sqlline.SqlLine "$@" -->
+		<java classpathref="deps.path" classname="${mainclass}" fork="true">
+			<arg line="${args}"/>
+		</java>
+	</target>
+
+	<target name="is-installed-mvn" depends="artifact.deps">
+		<!--  description="Test if artifact is installed (mvn version)" -->
+		<!-- TODO: add target to update only 'maven-dependency-plugin' -->
+		<!-- http://stackoverflow.com/questions/10177292/how-to-determine-if-a-maven-artifact-is-in-my-repo-from-command-line -->
+		<artifact:mvn>
+			<arg value="org.apache.maven.plugins:maven-dependency-plugin:2.1:get"/>
+			<!-- <arg value="dependency:get"/> -->
+			<arg value="-Dartifact=${groupId}:${artifactId}:${version}"/>
+			<arg value="-o"/>
+			<arg value="-DrepoUrl=${maven.repo.dir}"/>
+		</artifact:mvn>
+	</target>
+	
+	<target name="set-groupId-path" depends="artifact.deps">
+		<loadresource property="groupId.path">
+			<propertyresource name="groupId" />
+			<filterchain>
+				<tokenfilter>
+					<filetokenizer />
+					<replacestring from="." to="/" />
+				</tokenfilter>
+			</filterchain>
+		</loadresource>
+	</target>
+
+	<target name="is-installed" depends="set-groupId-path" description="Test if artifact is installed">
+		<!-- http://stackoverflow.com/questions/1176071/replacing-characters-in-ant-property -->
+
+		<!--property name="testdir" location="${maven.repo.dir}/${groupId.path}/${artifactId}/${version}" />
+		<echo message="testdir: ${testdir}"/>
+		<available file="${testdir}" type="dir" property="is.installed"/-->
+
+		<property name="testfile" location="${maven.repo.dir}/${groupId.path}/${artifactId}/${version}/${artifactId}-${version}.jar" />
+		<echo message="testfile: ${testfile}"/>
+		<available file="${testfile}" type="file" property="is.installed"/>
+
+		<!--property name="is.installed" value="false"/-->
+		<echo message="installed: ${is.installed}"/>
+	</target>
+	
+	<target name="exit-if-not-installed" depends="is-installed">
+		<fail message="artifact ${groupId}:${artifactId}:${version} not installed" unless="is.installed"/>
+	</target>
+
+	<target name="install" depends="run.deps" description="Installs (downloads into local repo) the artifact">
+		<artifact:mvn>
+			<arg value="org.apache.maven.plugins:maven-dependency-plugin:2.1:get"/>
+			<!-- <arg value="dependency:get"/> -->
+			<arg value="-Dartifact=${groupId}:${artifactId}:${version}"/>
+			<arg value="-DrepoUrl=${maven.repo.dir}"/>
+			<arg value="-Dtransitive=true"/>
+		</artifact:mvn>
+	</target>
+
+	<target name="uninstall" depends="set-groupId-path" description="Uninstalls an artifact (not its dependencies)">
+		<property name="artifact.dir" location="${maven.repo.dir}/${groupId.path}/${artifactId}/${version}" />
+		
+		<echo message="artifact.dir: ${artifact.dir}"/>
+		<delete includeemptydirs="true">
+			<fileset dir="${artifact.dir}"/>
+		</delete>
+	</target>
+	
+	<target name="make-exec" depends="run.deps" description="Creates an executable script">
+		<!-- TODO: what about windows? -->
+
+		<!-- <echo message="path: ${deps.path.prop}"/> -->
+		<property name="script.file" value="${groupId}.${artifactId}.${version}.sh"/>
+		<property name="full.script.file" value="${executables.dir}/${script.file}"/>
+		<!-- <echo message="execs-dir: ${executables.dir} ; exec-file: ${script.file} ; full-exec-file: ${full.script.file}"/> -->
+		<!-- XXX: add '${args}' to executable? -->
+
+		<echo file="${full.script.file}">java -cp ${deps.path.prop} ${mainclass} "$@"</echo>
+		<chmod file="${full.script.file}" perm="+x"/>
+
+		<echo message="executable written to: ${full.script.file}"/>
+	</target>
+
+</project>
