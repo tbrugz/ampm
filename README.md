@@ -3,7 +3,7 @@ mvnrun
 ======
 
 **mvnrun** is a cli frontend to some package management tasks based on [maven](https://maven.apache.org/)
-repositories. Specially, you may use it to install, uninstall, run, & create executable for java artifacts.
+repositories. Specially, you may use it to install, uninstall, run, & create executables for java artifacts.
 
 
 using mvnrun
@@ -11,12 +11,13 @@ using mvnrun
 
 - depends on: java, maven, [ant](https://ant.apache.org/)
 
-- download [Maven Ant Tasks](http://maven.apache.org/ant-tasks/) into `$HOME/.ant/lib`
-  ([direct link](http://central.maven.org/maven2/org/apache/maven/maven-ant-tasks/2.1.3/maven-ant-tasks-2.1.3.jar))  
-  e.g.: `curl -o $HOME/.ant/lib/maven-ant-tasks-2.1.3.jar http://central.maven.org/maven2/org/apache/maven/maven-ant-tasks/2.1.3/maven-ant-tasks-2.1.3.jar`
-
 - clone this repo to some dir (`<mvnrun-dir>`)  
   `git clone https://github.com/tbrugz/mvnrun.git <mvnrun-dir>`
+
+- download [Maven Ant Tasks](http://maven.apache.org/ant-tasks/) into `$HOME/.ant/lib`
+  ([direct link](http://central.maven.org/maven2/org/apache/maven/maven-ant-tasks/2.1.3/maven-ant-tasks-2.1.3.jar))  
+  e.g.: `curl -o $HOME/.ant/lib/maven-ant-tasks-2.1.3.jar http://central.maven.org/maven2/org/apache/maven/maven-ant-tasks/2.1.3/maven-ant-tasks-2.1.3.jar`  
+  or run (from `<mvnrun-dir>`): `ant install-maven-ant-tasks`
 
 - run it (from `<mvnrun-dir>` for now)
 
@@ -34,20 +35,24 @@ Test if jetty-runner is installed:
 Install jetty-runner and its dependencies:  
 `ant -DgroupId=org.eclipse.jetty -DartifactId=jetty-runner -Dversion=9.3.10.M0 install`
 
-Run jetty-runner:  
+Run jetty-runner (replace `<some-dir>`):  
 `ant -DgroupId=org.eclipse.jetty -DartifactId=jetty-runner -Dversion=9.3.10.M0 -Dmainclass=org.eclipse.jetty.runner.Runner -Dargs="--port 8081 <some-dir>" run`
 
-Create executable script:  
-`ant -DgroupId=org.eclipse.jetty -DartifactId=jetty-runner -Dversion=9.3.10.M0 -Dmainclass=org.eclipse.jetty.runner.Runner make-exec`
+Run jetty-runner without `mainclass` property - extracted from MANIFEST (replace `<some-dir>`):  
+`ant -DgroupId=org.eclipse.jetty -DartifactId=jetty-runner -Dversion=9.3.10.M0 -Dargs="--port 8081 <some-dir>" run`
 
-Run the executable script created:  
+Create executable script:  
+`ant -DgroupId=org.eclipse.jetty -DartifactId=jetty-runner -Dversion=9.3.10.M0 -Dmainclass=org.eclipse.jetty.runner.Runner make-exec` or  
+`ant -DgroupId=org.eclipse.jetty -DartifactId=jetty-runner -Dversion=9.3.10.M0 make-exec`
+
+Run the executable script created (replace `<some-dir>`):  
 `org.eclipse.jetty.jetty-runner.9.3.10.M0.sh --port 8081 <some-dir>`  
 or: `org.eclipse.jetty.jetty-runner.9.3.10.M0.bat --port 8081 <some-dir>` (windows)
 
 Uninstall jetty-runner (not its dependencies):  
 `ant -DgroupId=org.eclipse.jetty -DartifactId=jetty-runner -Dversion=9.3.10.M0 uninstall`
 
-You mmay search for jetty runner artifacts in
+You may search for jetty runner artifacts in
 [maven central](http://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22org.eclipse.jetty%22%20AND%20a%3A%22jetty-runner%22)
 or [mvnrepository.com](http://mvnrepository.com/artifact/org.eclipse.jetty/jetty-runner)
 

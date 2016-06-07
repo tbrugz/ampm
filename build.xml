@@ -8,7 +8,10 @@
 	<property name="maven.dir" location="${user.home}/.m2"/>
 	<property name="maven.repo.dir" location="${maven.dir}/repository"/>
 
-	<property name="maven.repo.central" value="http://download.java.net/maven/2/"/>
+	<property name="maven.repo.central" value="http://central.maven.org/maven2"/>
+	<!--
+	http://central.maven.org/maven2 ; http://download.java.net/maven/2 (?)
+	-->
 
 	<!--
 	<property name="groupId"/>
@@ -21,14 +24,37 @@
 
 	<property name="executables.dir" value="${user.home}/bin"/>
 
+	<!--
+	see: http://mail-archives.apache.org/mod_mbox/ant-user/200812.mbox/%3C9EE86F1965E19E499C80DE52AC807B5502A477D1@z011021.bk.fin.local%3E
+	-->
+	<macrodef name="loadmf">
+		<attribute name="jar" />
+		<attribute name="prefix" default="" />
+		<sequential>
+			<loadproperties>
+				<!-- Load the manifest entries -->
+				<zipentry zipfile="@{jar}" name="META-INF/MANIFEST.MF" />
+				<!-- Add the prefix -->
+				<filterchain>
+					<prefixlines prefix="@{prefix}" />
+				</filterchain>
+			</loadproperties>
+		</sequential>
+	</macrodef>
+
 	<target name="info" description="Show basic info">
-		<echo message="maven.dir: ${maven.dir}"/>
-		<echo message="maven.repo.dir: ${maven.repo.dir}"/>
+		<echo message="maven.dir: ${maven.dir}" />
+		<echo message="maven.repo.dir: ${maven.repo.dir}" />
 		<echo message="maven.repo.central: ${maven.repo.central}"/>
 		<echo message="executables.dir: ${executables.dir}"/>
 
 		<echo message=""/>
 		<echo message="for main targets, run `ant -projecthelp`"/>
+	</target>
+	
+	<target name="install-maven-ant-tasks">
+		<get src="${maven.repo.central}/org/apache/maven/maven-ant-tasks/2.1.3/maven-ant-tasks-2.1.3.jar"
+			dest="${user.home}/.ant/lib" /> 
 	</target>
 
 	<target name="artifact.deps">
@@ -51,7 +77,17 @@
 		<pathconvert property="deps.path.prop" refid="deps.path"/>
 	</target>
 
-	<target name="run.deps" depends="install.deps">
+	<target name="run.deps" depends="install.deps, set-groupId-path">
+		<property name="mainjar" location="${maven.repo.dir}/${groupId.path}/${artifactId}/${version}/${artifactId}-${version}.jar" />
+		<sequential unless:set="mainclass">
+			<loadmf jar="${mainjar}" prefix="manifest."/>
+			<!--<echoproperties prefix="manifest."/>-->
+			<sequential if:set="manifest.Main-Class">
+				<echo message="setting 'mainclass' from manifest info: Main-Class=${manifest.Main-Class}"/>
+				<property name="mainclass" value="${manifest.Main-Class}"/>
+			</sequential>
+		</sequential>
+		
 		<fail message="param 'mainclass' undefined" unless="mainclass"/>
 	</target>
 
@@ -80,7 +116,7 @@
 			<arg value="-DrepoUrl=${maven.repo.dir}"/>
 		</artifact:mvn>
 	</target>
-	
+
 	<target name="set-groupId-path" depends="artifact.deps">
 		<loadresource property="groupId.path">
 			<propertyresource name="groupId" />
@@ -109,7 +145,7 @@
 		<echo message="installed: true" if:set="is.installed"/>
 		<echo message="installed: false" unless:set="is.installed"/>
 	</target>
-	
+
 	<target name="exit-if-not-installed" depends="is-installed">
 		<fail message="artifact ${groupId}:${artifactId}:${version} not installed" unless="is.installed"/>
 	</target>
@@ -126,31 +162,31 @@
 
 	<target name="uninstall" depends="set-groupId-path" description="Uninstalls an artifact (not its dependencies)">
 		<property name="artifact.dir" location="${maven.repo.dir}/${groupId.path}/${artifactId}/${version}" />
-		
+
 		<echo message="artifact.dir: ${artifact.dir}"/>
 		<delete includeemptydirs="true">
 			<fileset dir="${artifact.dir}"/>
 		</delete>
 	</target>
-	
+
 	<target name="make-exec" depends="run.deps" description="Creates an executable script">
-		
+
 		<condition property="on.windows">
 			<os family="windows"/>
 		</condition>
 		<property name="base.script.file" value="${groupId}.${artifactId}.${version}"/>
-		
+
 		<!-- XXX: add '${args}' to executable? -->
 		<sequential unless:set="on.windows">
 			<property name="full.script.file" value="${executables.dir}/${base.script.file}.sh"/>
-	
+
 			<echo file="${full.script.file}">java -cp ${deps.path.prop} ${mainclass} "$@"</echo>
 			<chmod file="${full.script.file}" perm="+x"/>
 		</sequential>
-		
+
 		<sequential if:set="on.windows">
 			<property name="full.script.file" value="${executables.dir}/${base.script.file}.bat"/>
-	
+
 			<echo file="${full.script.file}">java -cp ${deps.path.prop} ${mainclass} %*</echo>
 		</sequential>
 
