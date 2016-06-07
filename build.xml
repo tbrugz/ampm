@@ -1,5 +1,7 @@
 <project name="mvnrun" basedir="." default="info"
-	xmlns:ivy="antlib:org.apache.ivy.ant" xmlns:artifact="antlib:org.apache.maven.artifact.ant">
+	xmlns:artifact="antlib:org.apache.maven.artifact.ant"
+	xmlns:if="ant:if" xmlns:unless="ant:unless">
+	<!-- xmlns:ivy="antlib:org.apache.ivy.ant" -->
 
 	<property environment="env"/>
 
@@ -103,7 +105,9 @@
 		<available file="${testfile}" type="file" property="is.installed"/>
 
 		<!--property name="is.installed" value="false"/-->
-		<echo message="installed: ${is.installed}"/>
+		<!--echo message="installed: ${is.installed}" if:set="is.installed"/-->
+		<echo message="installed: true" if:set="is.installed"/>
+		<echo message="installed: false" unless:set="is.installed"/>
 	</target>
 	
 	<target name="exit-if-not-installed" depends="is-installed">
@@ -130,16 +134,25 @@
 	</target>
 	
 	<target name="make-exec" depends="run.deps" description="Creates an executable script">
-		<!-- TODO: what about windows? -->
-
-		<!-- <echo message="path: ${deps.path.prop}"/> -->
-		<property name="script.file" value="${groupId}.${artifactId}.${version}.sh"/>
-		<property name="full.script.file" value="${executables.dir}/${script.file}"/>
-		<!-- <echo message="execs-dir: ${executables.dir} ; exec-file: ${script.file} ; full-exec-file: ${full.script.file}"/> -->
+		
+		<condition property="on.windows">
+			<os family="windows"/>
+		</condition>
+		<property name="base.script.file" value="${groupId}.${artifactId}.${version}"/>
+		
 		<!-- XXX: add '${args}' to executable? -->
-
-		<echo file="${full.script.file}">java -cp ${deps.path.prop} ${mainclass} "$@"</echo>
-		<chmod file="${full.script.file}" perm="+x"/>
+		<sequential unless:set="on.windows">
+			<property name="full.script.file" value="${executables.dir}/${base.script.file}.sh"/>
+	
+			<echo file="${full.script.file}">java -cp ${deps.path.prop} ${mainclass} "$@"</echo>
+			<chmod file="${full.script.file}" perm="+x"/>
+		</sequential>
+		
+		<sequential if:set="on.windows">
+			<property name="full.script.file" value="${executables.dir}/${base.script.file}.bat"/>
+	
+			<echo file="${full.script.file}">java -cp ${deps.path.prop} ${mainclass} %*</echo>
+		</sequential>
 
 		<echo message="executable written to: ${full.script.file}"/>
 	</target>
