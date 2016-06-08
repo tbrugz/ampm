@@ -48,7 +48,7 @@ or: `ant -DgroupId=org.eclipse.jetty -DartifactId=jetty-runner -Dversion=9.3.10.
 
 Run the executable script created (replace `<some-dir>`):  
 `org.eclipse.jetty.jetty-runner.9.3.10.M0.sh --port 8081 <some-dir>`  
-or: `org.eclipse.jetty.jetty-runner.9.3.10.M0.bat --port 8081 <some-dir>` (windows)
+or (windows): `org.eclipse.jetty.jetty-runner.9.3.10.M0.bat --port 8081 <some-dir>`
 
 Uninstall jetty-runner (not its dependencies):  
 `ant -DgroupId=org.eclipse.jetty -DartifactId=jetty-runner -Dversion=9.3.10.M0 uninstall`
@@ -59,19 +59,37 @@ or [mvnrepository.com](http://mvnrepository.com/artifact/org.eclipse.jetty/jetty
 
 #### javadev/calc
 
+Examples using swing app [javadev/calc](https://github.com/javadev/calc)
+
 Install calc:  
 `ant -DgroupId=com.github.javadev -DartifactId=calc -Dversion=1.0 install`
 
 Run calc:  
-`ant -DgroupId=com.github.javadev -DartifactId=calc -Dversion=1.0 -Dmainclass=com.github.calc.Calc run`
+`ant -DgroupId=com.github.javadev -DartifactId=calc -Dversion=1.0 -Dmainclass=com.github.calc.Calc run`  
+or: `ant -DgroupId=com.github.javadev -DartifactId=calc -Dversion=1.0 run`
+
+#### sqlline
+
+Examples using [sqlline](https://github.com/julianhyde/sqlline)
+
+Install sqlline:  
+`ant -DgroupId=sqlline -DartifactId=sqlline -Dversion=1.1.9 install`
+
+Run sqlline (using extra `classpath` - replace `<dir-with-drivers-jars>`):  
+`ant -DgroupId=sqlline -DartifactId=sqlline -Dversion=1.1.9 -Dmainclass=sqlline.SqlLine -Dclasspath=<dir-with-drivers-jars>/* run`
+
+Create executable script (replace `<dir-with-drivers-jars>`):  
+`ant -DgroupId=sqlline -DartifactId=sqlline -Dversion=1.1.9 -Dmainclass=sqlline.SqlLine -Dclasspath=<dir-with-drivers-jars>/* make-exec`
 
 #### Microemu
 
+Examples using [microemulator/microemu-javase-swing](https://github.com/tisoft/microemu/tree/master/microemulator/microemu-javase-swing)
+
 Install microemulator:  
-`ant -DgroupId=org.microemu -DartifactId=microemulator-app-swing -Dversion=2.0.0 install`
+`ant -DgroupId=org.microemu -DartifactId=microemu-javase-swing -Dversion=2.0.4 install`
 
 Run microemulator:  
-`ant -DgroupId=org.microemu -DartifactId=microemulator-app-swing -Dversion=2.0.0 -Dmainclass=org.microemu.app.Main run`
+`ant -DgroupId=org.microemu -DartifactId=microemu-javase-swing -Dversion=2.0.4 -Dmainclass=org.microemu.app.Main run`
 
 
 end notes

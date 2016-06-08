@@ -81,8 +81,14 @@
 		<artifact:dependencies pathId="deps.path">
 			<dependency groupId="${groupId}" artifactId="${artifactId}" version="${version}" scope="${scope}"/>
 		</artifact:dependencies>
+		
+		<path id="exec.path">
+			<path refid="deps.path"/>
+			<pathelement path="${classpath}" if:set="classpath"/>
+		</path>
+		
 		<!-- http://stackoverflow.com/questions/2430445/is-it-possible-to-have-ant-print-out-the-classpath-for-a-particular-target-if-s -->
-		<pathconvert property="deps.path.prop" refid="deps.path"/>
+		<pathconvert property="exec.path.prop" refid="exec.path"/>
 	</target>
 
 	<target name="run.deps" depends="install.deps, set-groupId-path">
@@ -96,19 +102,20 @@
 			</sequential>
 		</sequential>
 		
-		<fail message="param 'mainclass' undefined" unless="mainclass"/>
+		<fail message="param 'mainclass' undefined (and not found in MANIFEST.MF)" unless="mainclass"/>
 	</target>
 
 	<target name="run" depends="exit-if-not-installed, run.deps" description="Executes the mainclass of an application">
-		<echo message="path: ${deps.path.prop}"/>
+		<echo message="path: ${exec.path.prop}"/>
 		<!-- TODO: option of no ant "debug info" - not good for cli apps -->
 		<!-- TODO: extract mainclass from jar -->
 
 		<!-- java -Djava.ext.dirs="$M2_REPO"/sqlline/sqlline/1.1.9:"$M2_REPO"/jline/jline/2.10:/home/tbrugz/Desktop/java/jars-etc/libs-jdbc sqlline.SqlLine -->
 		<!-- mvnrun$ ant -DgroupId=sqlline -DartifactId=sqlline -Dversion=1.1.9 -Dmainclass=sqlline.SqlLine run -->
 		<!-- java -Djava.ext.dirs=$BINPATH sqlline.SqlLine "$@" -->
-		<java classpathref="deps.path" classname="${mainclass}" fork="true">
-			<arg line="${args}"/>
+		<!--<echo message="classpath: ${classpath}"/>-->
+		<java classpathref="exec.path" classname="${mainclass}" fork="true">
+			<arg line="${args}" if:set="args"/>
 		</java>
 	</target>
 
@@ -188,14 +195,14 @@
 		<sequential unless:set="on.windows">
 			<property name="full.script.file" value="${executables.dir}/${base.script.file}.sh"/>
 
-			<echo file="${full.script.file}">java -cp ${deps.path.prop} ${mainclass} "$@"</echo>
+			<echo file="${full.script.file}">java -cp ${exec.path.prop} ${mainclass} "$@"</echo>
 			<chmod file="${full.script.file}" perm="+x"/>
 		</sequential>
 
 		<sequential if:set="on.windows">
 			<property name="full.script.file" value="${executables.dir}/${base.script.file}.bat"/>
 
-			<echo file="${full.script.file}">java -cp ${deps.path.prop} ${mainclass} %*</echo>
+			<echo file="${full.script.file}">java -cp ${exec.path.prop} ${mainclass} %*</echo>
 		</sequential>
 
 		<echo message="executable written to: ${full.script.file}"/>
