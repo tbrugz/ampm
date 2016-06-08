@@ -70,6 +70,14 @@
 	<target name="install.deps" depends="artifact.deps">
 		<fail message="param 'scope' undefined" unless="scope"/>
 
+		<!-- see: https://ant.apache.org/manual/Tasks/conditions.html -->
+		<condition property="has.maven-ant-tasks">
+			<typefound uri="antlib:org.apache.maven.artifact.ant" name="dependencies"/>
+		</condition>
+
+		<!--<echo>has.maven-ant-tasks: ${has.maven-ant-tasks}</echo>-->
+		<fail message="'maven-ant-tasks' library not found. Please install using `ant install-maven-ant-tasks`" unless="has.maven-ant-tasks"/>
+		
 		<artifact:dependencies pathId="deps.path">
 			<dependency groupId="${groupId}" artifactId="${artifactId}" version="${version}" scope="${scope}"/>
 		</artifact:dependencies>

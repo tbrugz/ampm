@@ -3,7 +3,7 @@ mvnrun
 ======
 
 **mvnrun** is a cli frontend to some package management tasks based on [maven](https://maven.apache.org/)
-repositories. Specially, you may use it to install, uninstall, run, & create executables for java artifacts.
+repositories. Specially, you may use it to install, uninstall, run & create executables for java artifacts.
 
 
 using mvnrun
@@ -36,14 +36,15 @@ Install jetty-runner and its dependencies:
 `ant -DgroupId=org.eclipse.jetty -DartifactId=jetty-runner -Dversion=9.3.10.M0 install`
 
 Run jetty-runner (replace `<some-dir>`):  
-`ant -DgroupId=org.eclipse.jetty -DartifactId=jetty-runner -Dversion=9.3.10.M0 -Dmainclass=org.eclipse.jetty.runner.Runner -Dargs="--port 8081 <some-dir>" run`
+`ant -DgroupId=org.eclipse.jetty -DartifactId=jetty-runner -Dversion=9.3.10.M0 -Dmainclass=org.eclipse.jetty.runner.Runner -Dargs="--port 8081 <some-dir>" run`  
+(and navigate to `http://localhost:8081/`)
 
 Run jetty-runner without `mainclass` property - extracted from MANIFEST (replace `<some-dir>`):  
 `ant -DgroupId=org.eclipse.jetty -DartifactId=jetty-runner -Dversion=9.3.10.M0 -Dargs="--port 8081 <some-dir>" run`
 
 Create executable script:  
-`ant -DgroupId=org.eclipse.jetty -DartifactId=jetty-runner -Dversion=9.3.10.M0 -Dmainclass=org.eclipse.jetty.runner.Runner make-exec` or  
-`ant -DgroupId=org.eclipse.jetty -DartifactId=jetty-runner -Dversion=9.3.10.M0 make-exec`
+`ant -DgroupId=org.eclipse.jetty -DartifactId=jetty-runner -Dversion=9.3.10.M0 -Dmainclass=org.eclipse.jetty.runner.Runner make-exec`  
+or: `ant -DgroupId=org.eclipse.jetty -DartifactId=jetty-runner -Dversion=9.3.10.M0 make-exec`
 
 Run the executable script created (replace `<some-dir>`):  
 `org.eclipse.jetty.jetty-runner.9.3.10.M0.sh --port 8081 <some-dir>`  
