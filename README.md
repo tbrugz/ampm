@@ -9,7 +9,7 @@ repositories. Specially, you may use it to install, uninstall, run & create exec
 using mvnrun
 ------
 
-- depends on: java, maven, [ant](https://ant.apache.org/)
+- depends on: java, maven, [ant](https://ant.apache.org/) (>=1.9.1)
 
 - clone this repo to some dir (`<mvnrun-dir>`)  
   `git clone https://github.com/tbrugz/mvnrun.git <mvnrun-dir>`  
@@ -97,7 +97,8 @@ Run h2 (see [options](http://www.h2database.com/javadoc/org/h2/tools/Server.html
 or: `com.h2database.h2.1.4.192.sh -tcpPort 9095`
 
 Run h2 shell (make-exec & run using `exec.variant`):  
-`ant -DgroupId=com.h2database -DartifactId=h2 -Dversion=1.4.192 -Dmainclass=org.h2.tools.Shell -Dexec.variant=Shell make-exec`
+`ant -DgroupId=com.h2database -DartifactId=h2 -Dversion=1.4.192 -Dmainclass=org.h2.tools.Shell -Dexec.variant=Shell make-exec`  
+and: `com.h2database.h2.1.4.192.Shell.sh`
 
 #### Microemu
 
