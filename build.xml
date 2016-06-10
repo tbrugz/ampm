@@ -6,9 +6,12 @@
 	<property name="project.version" value="0.1"/>
 	<property name="config.file" value=".mvnrun.properties"/>
 
-	<echo message="${ant.project.name} - version ${project.version}"></echo>
+	<!-- required by ant:if - https://ant.apache.org/manual/ifunless.html -->
+	<property name="ant.version.required" value="1.9.1" />
 
-	<property file="${user.dir}/.mvnrun.properties"/>
+	<echo message="${ant.project.name} - version ${project.version}"/>
+
+	<!--<property file="${user.dir}/.mvnrun.properties"/> ?? -->
 	<property file="${user.home}/.mvnrun.properties"/>
 
 	<property environment="env"/>
@@ -30,7 +33,7 @@
 	<!-- <property name="run.mainclass"/> -->
 	<!-- java.ext.dirs: extra jars - jdbc drivers, ... -->
 
-	<property name="executables.dir" value="${user.home}/bin"/>
+	<property name="executables.dir" value="${user.home}${file.separator}bin"/>
 
 	<!--
 	see: http://mail-archives.apache.org/mod_mbox/ant-user/200812.mbox/%3C9EE86F1965E19E499C80DE52AC807B5502A477D1@z011021.bk.fin.local%3E
@@ -50,13 +53,16 @@
 		</sequential>
 	</macrodef>
 
-	<target name="info" description="Show basic info">
+	<target name="info" depends="prepare" description="Shows basic info">
 		<echo message="ant.project.name: ${ant.project.name}" />
 		<echo message="project.version: ${project.version}" />
 		<echo message="ant.file: ${ant.file}" />
 
 		<echo message="ant.version: ${ant.version}" />
 		<echo message="ant.java.version: ${ant.java.version}" />
+		<echo message="os.name/os.version: ${os.name} / ${os.version}" />
+		<echo message="os.arch: ${os.arch}" />
+		<!--<echo message="os.version: ${os.version}" />-->
 
 		<echo message="maven.dir: ${maven.dir}" />
 		<echo message="maven.repo.dir: ${maven.repo.dir}" />
@@ -68,12 +74,27 @@
 	</target>
 
 	<target name="install-maven-ant-tasks">
+		<mkdir dir="${user.home}/.ant/lib"/>
 		<get src="${maven.repo.remote}/org/apache/maven/maven-ant-tasks/2.1.3/maven-ant-tasks-2.1.3.jar"
 			dest="${user.home}/.ant/lib" />
 	</target>
 
-	<target name="artifact.deps">
-		<fail message="param 'groupId' undefined" unless="groupId"/>
+	<target name="ant-version-check">
+		<antversion property="ant.version.running" />
+		<fail message="using ant version ${ant.version.running} - minimal suggested version is ${ant.version.required}">
+			<condition>
+				<not>
+					<antversion atleast="${ant.version.required}" />
+				</not>
+			</condition>
+		</fail>
+	</target>
+
+	<target name="prepare" depends="ant-version-check">
+	</target>
+
+	<target name="artifact.deps" depends="prepare">
+		<fail message="param 'groupId' undefined" unless="groupId" />
 		<fail message="param 'artifactId' undefined" unless="artifactId"/>
 		<fail message="param 'version' undefined" unless="version"/>
 		<!--
@@ -92,16 +113,16 @@
 
 		<!--<echo>has.maven-ant-tasks: ${has.maven-ant-tasks}</echo>-->
 		<fail message="'maven-ant-tasks' library not found. Please install using `ant install-maven-ant-tasks`" unless="has.maven-ant-tasks"/>
-		
+
 		<artifact:dependencies pathId="deps.path">
 			<dependency groupId="${groupId}" artifactId="${artifactId}" version="${version}" scope="${scope}"/>
 		</artifact:dependencies>
-		
+
 		<path id="exec.path">
 			<path refid="deps.path"/>
 			<pathelement path="${classpath}" if:set="classpath"/>
 		</path>
-		
+
 		<!-- http://stackoverflow.com/questions/2430445/is-it-possible-to-have-ant-print-out-the-classpath-for-a-particular-target-if-s -->
 		<pathconvert property="exec.path.prop" refid="exec.path"/>
 	</target>
@@ -116,7 +137,7 @@
 				<property name="mainclass" value="${manifest.Main-Class}"/>
 			</sequential>
 		</sequential>
-		
+
 		<fail message="param 'mainclass' undefined (and not found in MANIFEST.MF)" unless="mainclass"/>
 	</target>
 
@@ -159,7 +180,7 @@
 		</loadresource>
 	</target>
 
-	<target name="is-installed" depends="set-groupId-path" description="Test if artifact is installed">
+	<target name="is-installed" depends="set-groupId-path" description="Tests if artifact is installed">
 		<!-- http://stackoverflow.com/questions/1176071/replacing-characters-in-ant-property -->
 
 		<!--property name="testdir" location="${maven.repo.dir}/${groupId.path}/${artifactId}/${version}" />
@@ -204,7 +225,15 @@
 		<condition property="on.windows">
 			<os family="windows"/>
 		</condition>
-		<property name="base.script.file" value="${groupId}.${artifactId}.${version}"/>
+
+		<!-- exec.variant -->
+		<sequential if:set="exec.variant">
+			<echo message="exec.variant: ${exec.variant}"/>
+			<property name="exec.variant.full" value=".${exec.variant}"/>
+		</sequential>
+		<property name="exec.variant.full" value=""/>
+
+		<property name="base.script.file" value="${groupId}.${artifactId}.${version}${exec.variant.full}"/>
 
 		<!-- XXX: add '${args}' to executable? -->
 		<sequential unless:set="on.windows">

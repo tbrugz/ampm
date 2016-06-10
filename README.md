@@ -85,6 +85,20 @@ Create executable script (replace `<dir-with-drivers-jars>`):
 Create executable script with name `sqlline.[sh|bat]` (replace `<dir-with-drivers-jars>`):  
 `ant -DgroupId=sqlline -DartifactId=sqlline -Dversion=1.1.9 -Dmainclass=sqlline.SqlLine -Dclasspath=<dir-with-drivers-jars>/* -Dbase.script.file=sqlline make-exec`
 
+#### h2
+
+Examples using [h2](http://www.h2database.com/)
+
+Install h2 & Make executable:  
+`ant -DgroupId=com.h2database -DartifactId=h2 -Dversion=1.4.192 install make-exec`
+
+Run h2 (see [options](http://www.h2database.com/javadoc/org/h2/tools/Server.html#main_String...)):  
+`ant -DgroupId=com.h2database -DartifactId=h2 -Dversion=1.4.192 -Dargs="-tcpPort 9095" run`  
+or: `com.h2database.h2.1.4.192.sh -tcpPort 9095`
+
+Run h2 shell (make-exec & run using `exec.variant`):  
+`ant -DgroupId=com.h2database -DartifactId=h2 -Dversion=1.4.192 -Dmainclass=org.h2.tools.Shell -Dexec.variant=Shell make-exec`
+
 #### Microemu
 
 Examples using [microemulator/microemu-javase-swing](https://github.com/tisoft/microemu/tree/master/microemulator/microemu-javase-swing)
