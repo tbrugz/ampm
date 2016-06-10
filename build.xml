@@ -54,12 +54,12 @@
 	</macrodef>
 
 	<target name="info" depends="prepare" description="Shows basic info">
-		<echo message="ant.project.name: ${ant.project.name}" />
-		<echo message="project.version: ${project.version}" />
+		<!--<echo message="ant.project.name: ${ant.project.name}" />
+		<echo message="project.version: ${project.version}" />-->
 		<echo message="ant.file: ${ant.file}" />
-
 		<echo message="ant.version: ${ant.version}" />
 		<echo message="ant.java.version: ${ant.java.version}" />
+
 		<echo message="os.name/os.version: ${os.name} / ${os.version}" />
 		<echo message="os.arch: ${os.arch}" />
 		<!--<echo message="os.version: ${os.version}" />-->
@@ -73,7 +73,7 @@
 		<echo message="for main targets, run `ant -projecthelp`"/>
 	</target>
 
-	<target name="install-maven-ant-tasks">
+	<target name="install-maven-ant-tasks" depends="prepare">
 		<mkdir dir="${user.home}/.ant/lib"/>
 		<get src="${maven.repo.remote}/org/apache/maven/maven-ant-tasks/2.1.3/maven-ant-tasks-2.1.3.jar"
 			dest="${user.home}/.ant/lib" />
@@ -93,7 +93,7 @@
 	<target name="prepare" depends="ant-version-check">
 	</target>
 
-	<target name="artifact.deps" depends="prepare">
+	<target name="artifact-deps" depends="prepare">
 		<fail message="param 'groupId' undefined" unless="groupId" />
 		<fail message="param 'artifactId' undefined" unless="artifactId"/>
 		<fail message="param 'version' undefined" unless="version"/>
@@ -103,7 +103,7 @@
 		-->
 	</target>
 
-	<target name="install.deps" depends="artifact.deps">
+	<target name="install-deps" depends="artifact-deps">
 		<fail message="param 'scope' undefined" unless="scope"/>
 
 		<!-- see: https://ant.apache.org/manual/Tasks/conditions.html -->
@@ -127,7 +127,7 @@
 		<pathconvert property="exec.path.prop" refid="exec.path"/>
 	</target>
 
-	<target name="run.deps" depends="install.deps, set-groupId-path">
+	<target name="run-deps" depends="install-deps, set-groupId-path">
 		<property name="mainjar" location="${maven.repo.dir}/${groupId.path}/${artifactId}/${version}/${artifactId}-${version}.jar" />
 		<sequential unless:set="mainclass">
 			<loadmf jar="${mainjar}" prefix="manifest."/>
@@ -141,7 +141,7 @@
 		<fail message="param 'mainclass' undefined (and not found in MANIFEST.MF)" unless="mainclass"/>
 	</target>
 
-	<target name="run" depends="exit-if-not-installed, run.deps" description="Executes the mainclass of an application">
+	<target name="run" depends="exit-if-not-installed, run-deps" description="Executes the mainclass of an application">
 		<echo message="path: ${exec.path.prop}"/>
 		<!-- TODO: option of no ant "debug info" - not good for cli apps -->
 		<!-- TODO: extract mainclass from jar -->
@@ -155,7 +155,7 @@
 		</java>
 	</target>
 
-	<target name="is-installed-mvn" depends="artifact.deps">
+	<target name="is-installed-mvn" depends="artifact-deps">
 		<!--  description="Test if artifact is installed (mvn version)" -->
 		<!-- TODO: add target to update only 'maven-dependency-plugin' -->
 		<!-- http://stackoverflow.com/questions/10177292/how-to-determine-if-a-maven-artifact-is-in-my-repo-from-command-line -->
@@ -168,7 +168,7 @@
 		</artifact:mvn>
 	</target>
 
-	<target name="set-groupId-path" depends="artifact.deps">
+	<target name="set-groupId-path" depends="artifact-deps">
 		<loadresource property="groupId.path">
 			<propertyresource name="groupId" />
 			<filterchain>
@@ -201,7 +201,7 @@
 		<fail message="artifact ${groupId}:${artifactId}:${version} not installed" unless="is.installed"/>
 	</target>
 
-	<target name="install" depends="install.deps" description="Installs (downloads into local repo) the artifact">
+	<target name="install" depends="install-deps" description="Installs (downloads into local repo) the artifact">
 		<artifact:mvn>
 			<arg value="org.apache.maven.plugins:maven-dependency-plugin:2.1:get"/>
 			<!-- <arg value="dependency:get"/> -->
@@ -220,7 +220,7 @@
 		</delete>
 	</target>
 
-	<target name="make-exec" depends="run.deps" description="Creates an executable script">
+	<target name="make-exec" depends="run-deps" description="Creates an executable script">
 
 		<condition property="on.windows">
 			<os family="windows"/>
