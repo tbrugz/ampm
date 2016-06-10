@@ -12,7 +12,8 @@ using mvnrun
 - depends on: java, maven, [ant](https://ant.apache.org/)
 
 - clone this repo to some dir (`<mvnrun-dir>`)  
-  `git clone https://github.com/tbrugz/mvnrun.git <mvnrun-dir>`
+  `git clone https://github.com/tbrugz/mvnrun.git <mvnrun-dir>`  
+  or just download [build.xml](https://raw.githubusercontent.com/tbrugz/mvnrun/master/build.xml) to `<mvnrun-dir>`
 
 - download [Maven Ant Tasks](http://maven.apache.org/ant-tasks/) into `$HOME/.ant/lib`
   ([direct link](http://central.maven.org/maven2/org/apache/maven/maven-ant-tasks/2.1.3/maven-ant-tasks-2.1.3.jar))  
@@ -81,6 +82,9 @@ Run sqlline (using extra `classpath` - replace `<dir-with-drivers-jars>`):
 Create executable script (replace `<dir-with-drivers-jars>`):  
 `ant -DgroupId=sqlline -DartifactId=sqlline -Dversion=1.1.9 -Dmainclass=sqlline.SqlLine -Dclasspath=<dir-with-drivers-jars>/* make-exec`
 
+Create executable script with name `sqlline.[sh|bat]` (replace `<dir-with-drivers-jars>`):  
+`ant -DgroupId=sqlline -DartifactId=sqlline -Dversion=1.1.9 -Dmainclass=sqlline.SqlLine -Dclasspath=<dir-with-drivers-jars>/* -Dbase.script.file=sqlline make-exec`
+
 #### Microemu
 
 Examples using [microemulator/microemu-javase-swing](https://github.com/tisoft/microemu/tree/master/microemulator/microemu-javase-swing)
@@ -95,5 +99,5 @@ Run microemulator:
 end notes
 ------
 
-Author: Telmo Brugnara <tbrugz@gmail.com>
+Author: Telmo Brugnara - <tbrugz@gmail.com>  
 License: [Apache License, v2.0](http://www.apache.org/licenses/LICENSE-2.0)

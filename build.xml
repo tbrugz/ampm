@@ -3,12 +3,20 @@
 	xmlns:if="ant:if" xmlns:unless="ant:unless">
 	<!-- xmlns:ivy="antlib:org.apache.ivy.ant" -->
 
+	<property name="project.version" value="0.1"/>
+	<property name="config.file" value=".mvnrun.properties"/>
+
+	<echo message="${ant.project.name} - version ${project.version}"></echo>
+
+	<property file="${user.dir}/.mvnrun.properties"/>
+	<property file="${user.home}/.mvnrun.properties"/>
+
 	<property environment="env"/>
 
 	<property name="maven.dir" location="${user.home}/.m2"/>
 	<property name="maven.repo.dir" location="${maven.dir}/repository"/>
 
-	<property name="maven.repo.central" value="http://central.maven.org/maven2"/>
+	<property name="maven.repo.remote" value="http://central.maven.org/maven2"/>
 	<!--
 	http://central.maven.org/maven2 ; http://download.java.net/maven/2 (?)
 	-->
@@ -43,18 +51,25 @@
 	</macrodef>
 
 	<target name="info" description="Show basic info">
+		<echo message="ant.project.name: ${ant.project.name}" />
+		<echo message="project.version: ${project.version}" />
+		<echo message="ant.file: ${ant.file}" />
+
+		<echo message="ant.version: ${ant.version}" />
+		<echo message="ant.java.version: ${ant.java.version}" />
+
 		<echo message="maven.dir: ${maven.dir}" />
 		<echo message="maven.repo.dir: ${maven.repo.dir}" />
-		<echo message="maven.repo.central: ${maven.repo.central}"/>
+		<echo message="maven.repo.remote: ${maven.repo.remote}"/>
 		<echo message="executables.dir: ${executables.dir}"/>
 
 		<echo message=""/>
 		<echo message="for main targets, run `ant -projecthelp`"/>
 	</target>
-	
+
 	<target name="install-maven-ant-tasks">
-		<get src="${maven.repo.central}/org/apache/maven/maven-ant-tasks/2.1.3/maven-ant-tasks-2.1.3.jar"
-			dest="${user.home}/.ant/lib" /> 
+		<get src="${maven.repo.remote}/org/apache/maven/maven-ant-tasks/2.1.3/maven-ant-tasks-2.1.3.jar"
+			dest="${user.home}/.ant/lib" />
 	</target>
 
 	<target name="artifact.deps">
