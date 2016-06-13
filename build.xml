@@ -99,14 +99,17 @@
 	<target name="artifact-deps" depends="prepare">
 		<fail message="param 'groupId' undefined" unless="groupId" />
 		<fail message="param 'artifactId' undefined" unless="artifactId"/>
-		<fail message="param 'version' undefined" unless="version"/>
 		<!--
 		option to use 'artifact'?
 		http://maven.apache.org/plugins/maven-dependency-plugin/get-mojo.html
 		-->
 	</target>
 
-	<target name="install-deps" depends="artifact-deps">
+	<target name="artifact-with-version-deps" depends="artifact-deps">
+		<fail message="param 'version' undefined" unless="version"/>
+	</target>
+
+	<target name="install-deps" depends="artifact-with-version-deps">
 		<fail message="param 'scope' undefined" unless="scope"/>
 
 		<!-- see: https://ant.apache.org/manual/Tasks/conditions.html -->
@@ -158,7 +161,8 @@
 		</java>
 	</target>
 
-	<target name="is-installed-mvn" depends="artifact-deps">
+	<!-- @Unused -->
+	<target name="is-installed-mvn" depends="artifact-with-version-deps">
 		<!--  description="Test if artifact is installed (mvn version)" -->
 		<!-- TODO: add target to update only 'maven-dependency-plugin' -->
 		<!-- http://stackoverflow.com/questions/10177292/how-to-determine-if-a-maven-artifact-is-in-my-repo-from-command-line -->
@@ -171,7 +175,7 @@
 		</artifact:mvn>
 	</target>
 
-	<target name="set-groupId-path" depends="artifact-deps">
+	<target name="set-groupId-path" depends="artifact-with-version-deps">
 		<loadresource property="groupId.path">
 			<propertyresource name="groupId" />
 			<filterchain>
@@ -253,6 +257,48 @@
 		</sequential>
 
 		<echo message="executable written to: ${full.script.file}"/>
+	</target>
+
+	<target name="check-latest-version" depends="artifact-deps" description="Checks artifact's latest version in Maven Central">
+		<property name="artifact.url.check" value="http://search.maven.org/solrsearch/select?q=g:${groupId}+AND+a:${artifactId}&amp;rows=20&amp;wt=xml"/>
+		<tstamp>
+			<format property="now" pattern="yyyyMMddHHmmssSSS"/>
+		</tstamp>
+		<property name="artifact.url.resp.file" value="${java.io.tmpdir}/${ant.project.name}.${now}.response.xml"/>
+		<!-- <echo message="artifact.url.check: ${artifact.url.check}"/>
+		<echo message="artifact.url.resp.file: ${artifact.url.resp.file}"/-->
+
+		<get src="${artifact.url.check}" dest="${artifact.url.resp.file}"/>
+		<!-- TODO: use javascript to parse REST return -->
+		<xmlproperty file="${artifact.url.resp.file}" prefix="mvnsearch" collapseattributes="true"/>
+		<!--<echoproperties prefix="mvnsearch"/>-->
+
+		<!--mvnsearch.response.result.doc.str.name
+		mvnsearch.response.result.doc.str=calc,com.github.javadev,com.github.javadev\:calc,1.0,jar,central
+		mvnsearch.response.result.doc.str.name=a,g,id,latestVersion,p,repositoryId
+		mvnsearch.response.result.numFound=1-->
+
+		<!-- http://stackoverflow.com/questions/25542102/ant-task-to-split-the-given-strings -->
+		<script language="javascript">
+			/*console = {
+				log: print,
+				warn: print,
+				error: print
+			};*/
+			var nameArr = (project.getProperty('mvnsearch.response.result.doc.str.name')+"").split(',');
+			var valueArr = (project.getProperty('mvnsearch.response.result.doc.str')+"").split(',');
+			var idx = nameArr.indexOf('latestVersion');
+			//console.log("nameArr", nameArr, typeof nameArr);
+			//console.log("valueArr", valueArr, typeof valueArr);
+
+			//project.setProperty('idx', idx);
+			if(idx>=0) {
+				project.setProperty('artifact.latestVersion', valueArr[idx]);
+			}
+		</script>
+		<!--<echo message="idx: ${idx}"/>-->
+		<echo message="latestVersion: ${artifact.latestVersion}"/>
+
 	</target>
 
 </project>
