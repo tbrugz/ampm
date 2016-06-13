@@ -3,7 +3,7 @@
 	xmlns:if="ant:if" xmlns:unless="ant:unless">
 	<!-- xmlns:ivy="antlib:org.apache.ivy.ant" -->
 
-	<property name="project.version" value="0.1"/>
+	<property name="project.version" value="0.2"/>
 	<property name="config.file" value=".mvnrun.properties"/>
 
 	<!-- required by ant:if - https://ant.apache.org/manual/ifunless.html -->
@@ -105,9 +105,16 @@
 		-->
 	</target>
 
-	<target name="artifact-with-version-deps" depends="artifact-deps">
-		<fail message="param 'version' undefined" unless="version"/>
+	<target name="artifact-with-version-deps" depends="artifact-deps, get-artifact-latest-version">
+		<!--antcall target="check-latest-version" if:set="useLatestVersion" unless:set="version"/-->
+
+		<property name="version" value="${artifact.latestVersion}" if:set="artifact.latestVersion"/>
+		<fail message="param 'version' undefined (for latest version, set 'useLatestVersion')" unless="version"/>
 	</target>
+
+	<!--<target name="get-artifact-latest-version" if="useLatestVersion" unless="version" depends="retrieve-latest-version">
+		<!- -<echo message="get-artifact-latest-version: ${useLatestVersion} ${version}"/>- ->
+	</target-->
 
 	<target name="install-deps" depends="artifact-with-version-deps">
 		<fail message="param 'scope' undefined" unless="scope"/>
@@ -259,7 +266,11 @@
 		<echo message="executable written to: ${full.script.file}"/>
 	</target>
 
-	<target name="check-latest-version" depends="artifact-deps" description="Checks artifact's latest version in Maven Central">
+	<target name="check-latest-version" depends="get-artifact-latest-version" description="Checks artifact's latest version in Maven Central">
+		<!--echo message="artifact.latestVersion: ${artifact.latestVersion}"/-->
+	</target>
+
+	<target name="get-artifact-latest-version" depends="artifact-deps" if="useLatestVersion" unless="version">
 		<property name="artifact.url.check" value="http://search.maven.org/solrsearch/select?q=g:${groupId}+AND+a:${artifactId}&amp;rows=20&amp;wt=xml"/>
 		<tstamp>
 			<format property="now" pattern="yyyyMMddHHmmssSSS"/>
@@ -297,8 +308,7 @@
 			}
 		</script>
 		<!--<echo message="idx: ${idx}"/>-->
-		<echo message="latestVersion: ${artifact.latestVersion}"/>
-
+		<echo message="artifact.latestVersion: ${artifact.latestVersion}"/>
 	</target>
 
 </project>

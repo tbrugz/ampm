@@ -93,8 +93,11 @@ Create executable script with name `sqlline.[sh|bat]` (replace `<dir-with-driver
 
 Examples using [h2](http://www.h2database.com/)
 
-Install h2 & Make executable:  
-`ant -DgroupId=com.h2database -DartifactId=h2 -Dversion=1.4.192 install make-exec`
+Install version `1.4.192` of h2:  
+`ant -DgroupId=com.h2database -DartifactId=h2 -Dversion=1.4.192 install`
+
+Install latest version of h2 & Make executable:  
+`ant -DgroupId=com.h2database -DartifactId=h2 -DuseLatestVersion=1 install make-exec`
 
 Run h2 (see [options](http://www.h2database.com/javadoc/org/h2/tools/Server.html#main_String...)):  
 `ant -DgroupId=com.h2database -DartifactId=h2 -Dversion=1.4.192 -Dargs="-tcpPort 9095" run`  
