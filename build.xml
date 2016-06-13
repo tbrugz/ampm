@@ -16,8 +16,7 @@
 
 	<property environment="env"/>
 
-	<property name="maven.dir" location="${user.home}/.m2"/>
-	<property name="maven.repo.dir" location="${maven.dir}/repository"/>
+	<property name="maven.user.dir" location="${user.home}/.m2"/>
 
 	<property name="maven.repo.remote" value="http://central.maven.org/maven2"/>
 	<!--
@@ -60,11 +59,9 @@
 		<echo message="ant.version: ${ant.version}" />
 		<echo message="ant.java.version: ${ant.java.version}" />
 
-		<echo message="os.name/os.version: ${os.name} / ${os.version}" />
-		<echo message="os.arch: ${os.arch}" />
-		<!--<echo message="os.version: ${os.version}" />-->
+		<echo message="os.name/version/arch: ${os.name} / ${os.version} / ${os.arch}" />
 
-		<echo message="maven.dir: ${maven.dir}" />
+		<echo message="maven.user.dir: ${maven.user.dir}" />
 		<echo message="maven.repo.dir: ${maven.repo.dir}" />
 		<echo message="maven.repo.remote: ${maven.repo.remote}"/>
 		<echo message="executables.dir: ${executables.dir}"/>
@@ -91,6 +88,12 @@
 	</target>
 
 	<target name="prepare" depends="ant-version-check">
+		<!-- setting 'maven.repo.dir' -->
+		<property name="maven.user.settings.file" location="${maven.user.dir}/settings.xml"/>
+		<xmlproperty file="${maven.user.settings.file}" prefix="mvnsettings" collapseAttributes="true"/>
+		<!--<echoproperties prefix="mvnsettings"/>-->
+		<property name="maven.repo.dir" location="${mvnsettings.settings.localRepository}" if:set="mvnsettings.settings.localRepository"/>
+		<property name="maven.repo.dir" location="${maven.user.dir}/repository"/>
 	</target>
 
 	<target name="artifact-deps" depends="prepare">
