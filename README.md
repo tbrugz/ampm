@@ -118,6 +118,16 @@ Run microemulator:
 `ant -DgroupId=org.microemu -DartifactId=microemu-javase-swing -Dversion=2.0.4 -Dmainclass=org.microemu.app.Main run`
 
 
+examples querying local repo
+------
+
+List organizations:  
+`ant -DgroupId=ch.qos.logback list-organizations` (list/show `ch.qos.logback` organization)  
+or: `ant -DgroupId=org list-organizations` (organizations from `org.`)  
+or: `ant -DgroupId=o* list-organizations` (organizations starting with `o`)  
+or: `ant list-organizations` (list all)
+
+
 end notes
 ------
 

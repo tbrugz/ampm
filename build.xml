@@ -169,7 +169,7 @@
 	</target>
 
 	<!-- @Unused -->
-	<target name="is-installed-mvn" depends="artifact-with-version-deps">
+	<target name="z-is-installed-mvn" depends="artifact-with-version-deps">
 		<!--  description="Test if artifact is installed (mvn version)" -->
 		<!-- TODO: add target to update only 'maven-dependency-plugin' -->
 		<!-- http://stackoverflow.com/questions/10177292/how-to-determine-if-a-maven-artifact-is-in-my-repo-from-command-line -->
@@ -347,6 +347,130 @@
 			}
 		</script>
 		<echo message="artifact.latestVersion: ${artifact.latestVersion}" if:set="artifact.latestVersion"/>
+	</target>
+
+	<!-- @Unused -->
+	<target name="z-list-organizations-v0" depends="prepare">
+		<!-- http://stackoverflow.com/questions/3934309/echoing-out-ant-fileset-to-screen-for-debugging -->
+
+		<fileset id="orgs.path" dir="${maven.repo.dir}">
+			<include name="**/*.pom"/>
+		</fileset>
+		<!--<echo message="orgs: ${toString:orgs.path}" />-->
+		<pathconvert pathsep="${line.separator}"
+			property="orgs.path.string"
+			refid="orgs.path">
+			<map from="${maven.repo.dir}/" to=""/>
+		</pathconvert>
+		<echo message="${orgs.path.string}" />
+	</target>
+
+	<target name="list-organizations" depends="prepare" description="List organizations with artifacts in the local repo">
+		<script language="javascript">
+			<![CDATA[
+			var File = java.io.File;
+
+			// http://stackoverflow.com/questions/2686855/is-there-a-javascript-function-that-can-pad-a-string-to-get-to-a-determined-leng
+			function pad(pad, str, padLeft) {
+				if (typeof str === 'undefined')
+					return pad;
+				if (padLeft) {
+					return (pad + str).slice(-pad.length);
+				} else {
+					return (str + pad).substring(0, pad.length);
+				}
+			}
+
+			var fs = project.createDataType("fileset");
+			var dir = project.getProperty("maven.repo.dir");
+			var groupId = project.getProperty("groupId");
+			fs.setDir( new File( dir ) );
+			var includes = "";
+			if(groupId) {
+				includes += groupId.replace(/\./g, "/") + "/"
+			}
+			includes += "**/*.pom";
+			if(groupId) {
+				print("includes filter: ", includes, "\n");
+			}
+			fs.setIncludes( includes );
+
+			// organizations
+			var orgs = {};
+			var orgsArt = {};
+
+			//artifacts
+			var arts = {};
+
+			var maxOrgLen = "<< organization >>".length+1;
+
+			// create echo Task via Ant API
+			var echo = project.createTask("echo");
+
+			// iterate over files found.
+			var srcFiles = fs.getDirectoryScanner( project ).getIncludedFiles( );
+			for ( i = 0; i < srcFiles.length; i++ ) {
+				var filename = srcFiles[i];
+				var parts = filename.split("/");
+				var org = parts.slice(0, parts.length-3);
+				var orgstr = org.join(".");
+				var art = parts[parts.length-3];
+				var artstr = orgstr+":"+art;
+
+				//print("orgstr: ", orgstr, "; art: ", art);
+
+				if(orgs[orgstr]!=null) {
+					orgs[orgstr]++
+				}
+				else {
+					orgs[orgstr] = 1;
+					if(maxOrgLen<orgstr.length) {
+						maxOrgLen = orgstr.length+1;
+					}
+				}
+
+				if(arts[artstr]!=null) {
+					arts[artstr]++
+				}
+				else {
+					arts[artstr] = 1;
+					if(orgsArt[orgstr]!=null) {
+						orgsArt[orgstr]++
+					}
+					else {
+						orgsArt[orgstr] = 1;
+					}
+				}
+
+				//print(parts.length, " - ", parts);
+
+				// use echo Task via Ant API
+				//echo.setMessage( filename );
+				//echo.perform( );
+			}
+
+			//print(">>>>> organizations: # of artifacts ; # of artifacts x versions");
+			var okeys = Object.keys(orgs);
+			var padding = Array(maxOrgLen).join(' ');
+			var pad2 = Array("#artifacts".length).join(' ');
+			var pad3 = Array("#artfcts-x-vrs".length).join(' ');
+			if(okeys.length>0) {
+				print( pad(padding, "<< organization >>") + "  #artifacts   #artfcts-x-vrs");
+				for ( i = 0; i < okeys.length; i++ ) {
+					//print(okeys[i]+": #artifacts="+orgsArt[okeys[i]]+" ; #artifacts-x-versions="+orgs[okeys[i]]);
+					print( pad(padding, okeys[i]) +"   "+pad(pad2, orgsArt[okeys[i]], true)+"    "+pad(pad3, orgs[okeys[i]], true) );
+				}
+			}
+			print( "\n# of organizations found = "+okeys.length);
+
+			//print("\n>>>>> artifacts: #versions");
+			//var akeys = Object.keys(arts);
+			//for ( i = 0; i < akeys.length; i++ ) {
+			//	print(akeys[i]+": #"+arts[akeys[i]]);
+			//}
+
+			]]>
+		</script>
 	</target>
 
 </project>
