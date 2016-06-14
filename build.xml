@@ -266,16 +266,23 @@
 		<echo message="executable written to: ${full.script.file}"/>
 	</target>
 
-	<target name="check-latest-version" depends="get-artifact-latest-version" description="Checks artifact's latest version in Maven Central">
-		<!--echo message="artifact.latestVersion: ${artifact.latestVersion}"/-->
+	<target name="set-useLatestVersion">
+		<property name="useLatestVersion" value="true"/>
 	</target>
 
-	<target name="get-artifact-latest-version" depends="artifact-deps" if="useLatestVersion" unless="version">
+	<target name="check-latest-version" depends="set-useLatestVersion, get-artifact-latest-version" description="Checks artifact's latest version in Maven Central">
+		<echo message="artifact.latestVersion: ${artifact.latestVersion}"/>
+	</target>
+
+	<!-- @Unused -->
+	<target name="z-old-get-artifact-latest-version" depends="artifact-deps" if="useLatestVersion" unless="version">
 		<property name="artifact.url.check" value="http://search.maven.org/solrsearch/select?q=g:${groupId}+AND+a:${artifactId}&amp;rows=20&amp;wt=xml"/>
 		<tstamp>
 			<format property="now" pattern="yyyyMMddHHmmssSSS"/>
 		</tstamp>
-		<property name="artifact.url.resp.file" value="${java.io.tmpdir}/${ant.project.name}.${now}.response.xml"/>
+
+		<tempfile property="artifact.url.resp.file" destdir="${java.io.tmpdir}" prefix="${ant.project.name}" suffix=".xml" deleteonexit="true"/>
+		<!--property name="artifact.url.resp.file" value="${java.io.tmpdir}/${ant.project.name}.${now}.response.xml"/-->
 		<!-- <echo message="artifact.url.check: ${artifact.url.check}"/>
 		<echo message="artifact.url.resp.file: ${artifact.url.resp.file}"/-->
 
@@ -309,6 +316,37 @@
 		</script>
 		<!--<echo message="idx: ${idx}"/>-->
 		<echo message="artifact.latestVersion: ${artifact.latestVersion}"/>
+	</target>
+
+	<target name="get-artifact-latest-version" depends="artifact-deps" if="useLatestVersion" unless="version">
+		<property name="artifact.url.check" value="http://search.maven.org/solrsearch/select?q=g:${groupId}+AND+a:${artifactId}&amp;rows=20&amp;wt=json"/>
+		<tstamp>
+			<format property="now" pattern="yyyyMMddHHmmssSSS"/>
+		</tstamp>
+
+		<tempfile property="artifact.url.resp.file" destdir="${java.io.tmpdir}" prefix="${ant.project.name}" suffix=".json" deleteonexit="true"/>
+		<get src="${artifact.url.check}" dest="${artifact.url.resp.file}"/>
+		<loadfile property="artifact.json.content" srcFile="${artifact.url.resp.file}"/>
+
+		<!-- http://stackoverflow.com/questions/22503100/java-8-javascript-engine-backwards-compatibility -->
+		<script language="javascript">
+			//var File = java.io.File;
+			//var jsonstr = new File( project.getProperty("artifact.url.resp.file") );
+			var jsonstr = project.getProperty("artifact.json.content");
+			//print(jsonstr);
+			var json = JSON.parse( jsonstr );
+			var count = json.response.docs.length;
+			if(count==0) {
+				print('no return found');
+			}
+			else {
+				if(count>1) {
+					print('response count > 1: ', count);
+				}
+				project.setProperty('artifact.latestVersion', json.response.docs[0].latestVersion);
+			}
+		</script>
+		<echo message="artifact.latestVersion: ${artifact.latestVersion}" if:set="artifact.latestVersion"/>
 	</target>
 
 </project>
