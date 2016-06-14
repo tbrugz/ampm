@@ -1,0 +1,373 @@
+<?xml version="1.0" encoding="UTF-8"?><g:graphml xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml/1.1/ygraphml.xsd" xmlns:g="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:y="http://www.yworks.com/xml/graphml">
+<g:key id="d0" for="node" yfiles.type="nodegraphics"/>
+<g:key id="d1" for="edge" yfiles.type="edgegraphics"/>
+<g:key id="d2" for="graph" yfiles.type="postprocessors"/>
+<g:graph id="G" edgedefault="directed">
+<g:node id="info">
+<g:data key="d0">
+<y:ShapeNode>
+<y:Fill color="#8888FF"/>
+<y:NodeLabel>info</y:NodeLabel>
+</y:ShapeNode>
+</g:data>
+</g:node>
+<g:node id="install-maven-ant-tasks">
+<g:data key="d0">
+<y:ShapeNode>
+<y:Fill color="#CCCCFF"/>
+<y:NodeLabel>install-maven-ant-tasks</y:NodeLabel>
+</y:ShapeNode>
+</g:data>
+</g:node>
+<g:node id="ant-version-check">
+<g:data key="d0">
+<y:ShapeNode>
+<y:Fill color="#CCCCFF"/>
+<y:NodeLabel>ant-version-check</y:NodeLabel>
+</y:ShapeNode>
+</g:data>
+</g:node>
+<g:node id="prepare">
+<g:data key="d0">
+<y:ShapeNode>
+<y:Fill color="#CCCCFF"/>
+<y:NodeLabel>prepare</y:NodeLabel>
+</y:ShapeNode>
+</g:data>
+</g:node>
+<g:node id="artifact-deps">
+<g:data key="d0">
+<y:ShapeNode>
+<y:Fill color="#CCCCFF"/>
+<y:NodeLabel>artifact-deps</y:NodeLabel>
+</y:ShapeNode>
+</g:data>
+</g:node>
+<g:node id="artifact-with-version-deps">
+<g:data key="d0">
+<y:ShapeNode>
+<y:Fill color="#CCCCFF"/>
+<y:NodeLabel>artifact-with-version-deps</y:NodeLabel>
+</y:ShapeNode>
+</g:data>
+</g:node>
+<g:node id="install-deps">
+<g:data key="d0">
+<y:ShapeNode>
+<y:Fill color="#CCCCFF"/>
+<y:NodeLabel>install-deps</y:NodeLabel>
+</y:ShapeNode>
+</g:data>
+</g:node>
+<g:node id="run-deps">
+<g:data key="d0">
+<y:ShapeNode>
+<y:Fill color="#CCCCFF"/>
+<y:NodeLabel>run-deps</y:NodeLabel>
+</y:ShapeNode>
+</g:data>
+</g:node>
+<g:node id="run">
+<g:data key="d0">
+<y:ShapeNode>
+<y:Fill color="#8888FF"/>
+<y:NodeLabel>run</y:NodeLabel>
+</y:ShapeNode>
+</g:data>
+</g:node>
+<g:node id="is-installed-mvn">
+<g:data key="d0">
+<y:ShapeNode>
+<y:Fill color="#CCCCFF"/>
+<y:NodeLabel>is-installed-mvn</y:NodeLabel>
+</y:ShapeNode>
+</g:data>
+</g:node>
+<g:node id="set-groupId-path">
+<g:data key="d0">
+<y:ShapeNode>
+<y:Fill color="#CCCCFF"/>
+<y:NodeLabel>set-groupId-path</y:NodeLabel>
+</y:ShapeNode>
+</g:data>
+</g:node>
+<g:node id="is-installed">
+<g:data key="d0">
+<y:ShapeNode>
+<y:Fill color="#8888FF"/>
+<y:NodeLabel>is-installed</y:NodeLabel>
+</y:ShapeNode>
+</g:data>
+</g:node>
+<g:node id="exit-if-not-installed">
+<g:data key="d0">
+<y:ShapeNode>
+<y:Fill color="#CCCCFF"/>
+<y:NodeLabel>exit-if-not-installed</y:NodeLabel>
+</y:ShapeNode>
+</g:data>
+</g:node>
+<g:node id="install">
+<g:data key="d0">
+<y:ShapeNode>
+<y:Fill color="#8888FF"/>
+<y:NodeLabel>install</y:NodeLabel>
+</y:ShapeNode>
+</g:data>
+</g:node>
+<g:node id="uninstall">
+<g:data key="d0">
+<y:ShapeNode>
+<y:Fill color="#8888FF"/>
+<y:NodeLabel>uninstall</y:NodeLabel>
+</y:ShapeNode>
+</g:data>
+</g:node>
+<g:node id="make-exec">
+<g:data key="d0">
+<y:ShapeNode>
+<y:Fill color="#8888FF"/>
+<y:NodeLabel>make-exec</y:NodeLabel>
+</y:ShapeNode>
+</g:data>
+</g:node>
+<g:node id="set-useLatestVersion">
+<g:data key="d0">
+<y:ShapeNode>
+<y:Fill color="#CCCCFF"/>
+<y:NodeLabel>set-useLatestVersion</y:NodeLabel>
+</y:ShapeNode>
+</g:data>
+</g:node>
+<g:node id="check-latest-version">
+<g:data key="d0">
+<y:ShapeNode>
+<y:Fill color="#8888FF"/>
+<y:NodeLabel>check-latest-version</y:NodeLabel>
+</y:ShapeNode>
+</g:data>
+</g:node>
+<g:node id="z-old-get-artifact-latest-version">
+<g:data key="d0">
+<y:ShapeNode>
+<y:Fill color="#CCCCFF"/>
+<y:NodeLabel>z-old-get-artifact-latest-version</y:NodeLabel>
+</y:ShapeNode>
+</g:data>
+</g:node>
+<g:node id="get-artifact-latest-version">
+<g:data key="d0">
+<y:ShapeNode>
+<y:Fill color="#CCCCFF"/>
+<y:NodeLabel>get-artifact-latest-version</y:NodeLabel>
+</y:ShapeNode>
+</g:data>
+</g:node>
+<g:edge target="info" source="prepare">
+<g:data key="d1">
+<y:PolyLineEdge>
+<y:LineStyle color="#000000" width="1.0" type="line"/>
+<y:Arrows source="standard" target="none"/>
+</y:PolyLineEdge>
+</g:data>
+</g:edge>
+<g:edge target="install-maven-ant-tasks" source="prepare">
+<g:data key="d1">
+<y:PolyLineEdge>
+<y:LineStyle color="#000000" width="1.0" type="line"/>
+<y:Arrows source="standard" target="none"/>
+</y:PolyLineEdge>
+</g:data>
+</g:edge>
+<g:edge target="prepare" source="ant-version-check">
+<g:data key="d1">
+<y:PolyLineEdge>
+<y:LineStyle color="#000000" width="1.0" type="line"/>
+<y:Arrows source="standard" target="none"/>
+</y:PolyLineEdge>
+</g:data>
+</g:edge>
+<g:edge target="artifact-deps" source="prepare">
+<g:data key="d1">
+<y:PolyLineEdge>
+<y:LineStyle color="#000000" width="1.0" type="line"/>
+<y:Arrows source="standard" target="none"/>
+</y:PolyLineEdge>
+</g:data>
+</g:edge>
+<g:edge target="artifact-with-version-deps" source="artifact-deps">
+<g:data key="d1">
+<y:PolyLineEdge>
+<y:LineStyle color="#000000" width="1.0" type="line"/>
+<y:Arrows source="standard" target="none"/>
+</y:PolyLineEdge>
+</g:data>
+</g:edge>
+<g:edge target="artifact-with-version-deps" source="get-artifact-latest-version">
+<g:data key="d1">
+<y:PolyLineEdge>
+<y:LineStyle color="#000000" width="1.0" type="line"/>
+<y:Arrows source="standard" target="none"/>
+</y:PolyLineEdge>
+</g:data>
+</g:edge>
+<g:edge target="install-deps" source="artifact-with-version-deps">
+<g:data key="d1">
+<y:PolyLineEdge>
+<y:LineStyle color="#000000" width="1.0" type="line"/>
+<y:Arrows source="standard" target="none"/>
+</y:PolyLineEdge>
+</g:data>
+</g:edge>
+<g:edge target="run-deps" source="install-deps">
+<g:data key="d1">
+<y:PolyLineEdge>
+<y:LineStyle color="#000000" width="1.0" type="line"/>
+<y:Arrows source="standard" target="none"/>
+</y:PolyLineEdge>
+</g:data>
+</g:edge>
+<g:edge target="run-deps" source="set-groupId-path">
+<g:data key="d1">
+<y:PolyLineEdge>
+<y:LineStyle color="#000000" width="1.0" type="line"/>
+<y:Arrows source="standard" target="none"/>
+</y:PolyLineEdge>
+</g:data>
+</g:edge>
+<g:edge target="run" source="exit-if-not-installed">
+<g:data key="d1">
+<y:PolyLineEdge>
+<y:LineStyle color="#000000" width="1.0" type="line"/>
+<y:Arrows source="standard" target="none"/>
+</y:PolyLineEdge>
+</g:data>
+</g:edge>
+<g:edge target="run" source="run-deps">
+<g:data key="d1">
+<y:PolyLineEdge>
+<y:LineStyle color="#000000" width="1.0" type="line"/>
+<y:Arrows source="standard" target="none"/>
+</y:PolyLineEdge>
+</g:data>
+</g:edge>
+<g:edge target="is-installed-mvn" source="artifact-with-version-deps">
+<g:data key="d1">
+<y:PolyLineEdge>
+<y:LineStyle color="#000000" width="1.0" type="line"/>
+<y:Arrows source="standard" target="none"/>
+</y:PolyLineEdge>
+</g:data>
+</g:edge>
+<g:edge target="set-groupId-path" source="artifact-with-version-deps">
+<g:data key="d1">
+<y:PolyLineEdge>
+<y:LineStyle color="#000000" width="1.0" type="line"/>
+<y:Arrows source="standard" target="none"/>
+</y:PolyLineEdge>
+</g:data>
+</g:edge>
+<g:edge target="is-installed" source="set-groupId-path">
+<g:data key="d1">
+<y:PolyLineEdge>
+<y:LineStyle color="#000000" width="1.0" type="line"/>
+<y:Arrows source="standard" target="none"/>
+</y:PolyLineEdge>
+</g:data>
+</g:edge>
+<g:edge target="exit-if-not-installed" source="is-installed">
+<g:data key="d1">
+<y:PolyLineEdge>
+<y:LineStyle color="#000000" width="1.0" type="line"/>
+<y:Arrows source="standard" target="none"/>
+</y:PolyLineEdge>
+</g:data>
+</g:edge>
+<g:edge target="install" source="install-deps">
+<g:data key="d1">
+<y:PolyLineEdge>
+<y:LineStyle color="#000000" width="1.0" type="line"/>
+<y:Arrows source="standard" target="none"/>
+</y:PolyLineEdge>
+</g:data>
+</g:edge>
+<g:edge target="uninstall" source="set-groupId-path">
+<g:data key="d1">
+<y:PolyLineEdge>
+<y:LineStyle color="#000000" width="1.0" type="line"/>
+<y:Arrows source="standard" target="none"/>
+</y:PolyLineEdge>
+</g:data>
+</g:edge>
+<g:edge target="make-exec" source="run-deps">
+<g:data key="d1">
+<y:PolyLineEdge>
+<y:LineStyle color="#000000" width="1.0" type="line"/>
+<y:Arrows source="standard" target="none"/>
+</y:PolyLineEdge>
+</g:data>
+</g:edge>
+<g:edge target="check-latest-version" source="set-useLatestVersion">
+<g:data key="d1">
+<y:PolyLineEdge>
+<y:LineStyle color="#000000" width="1.0" type="line"/>
+<y:Arrows source="standard" target="none"/>
+</y:PolyLineEdge>
+</g:data>
+</g:edge>
+<g:edge target="check-latest-version" source="get-artifact-latest-version">
+<g:data key="d1">
+<y:PolyLineEdge>
+<y:LineStyle color="#000000" width="1.0" type="line"/>
+<y:Arrows source="standard" target="none"/>
+</y:PolyLineEdge>
+</g:data>
+</g:edge>
+<g:edge target="z-old-get-artifact-latest-version" source="artifact-deps">
+<g:data key="d1">
+<y:PolyLineEdge>
+<y:LineStyle color="#000000" width="1.0" type="line"/>
+<y:Arrows source="standard" target="none"/>
+</y:PolyLineEdge>
+</g:data>
+</g:edge>
+<g:edge target="get-artifact-latest-version" source="artifact-deps">
+<g:data key="d1">
+<y:PolyLineEdge>
+<y:LineStyle color="#000000" width="1.0" type="line"/>
+<y:Arrows source="standard" target="none"/>
+</y:PolyLineEdge>
+</g:data>
+</g:edge>
+<g:data key="d2">
+<y:Postprocessors>
+<y:Processor class="A.A.A.A.A">
+<y:Option name="IGNORE_WIDTHS" value="false"/>
+<y:Option name="IGNORE_HEIGHTS" value="true"/>
+<y:Option name="ADAPT_TO_MAXIMUM_NODE" value="false"/>
+</y:Processor>
+<y:Processor class="y.B.Z">
+<y:Option name="LAYOUT.MINIMAL_FIRST_SEGMENT_LENGTH" value="20"/>
+<y:Option name="LAYOUT.MINIMAL_NODE_DISTANCE" value="20"/>
+<y:Option name="GROUPING.GROUP_LAYOUT_POLICY" value="LAYOUT_GROUPS"/>
+<y:Option name="NODE_ORDER.USE_TRANSPOSITION" value="true"/>
+<y:Option name="LAYOUT.ORIENTATION" value="TOP_TO_BOTTOM"/>
+<y:Option name="NODE_RANK.RANKING_POLICY" value="TIGHT_TREE"/>
+<y:Option name="LAYOUT.EDGE_ROUTING" value="POLYLINE"/>
+<y:Option name="LABELING.EDGE_LABELING" value="NONE"/>
+<y:Option name="NODE_ORDER.RANDOMIZATION_ROUNDS" value="40"/>
+<y:Option name="NODE_ORDER.WEIGHT_HEURISTIC" value="BARYCENTER"/>
+<y:Option name="NODE_ORDER.REMOVE_FALSE_CROSSINGS" value="true"/>
+<y:Option name="LABELING.EDGE_LABEL_MODEL" value="BEST"/>
+<y:Option name="LAYOUT.BACKLOOP_ROUTING" value="false"/>
+<y:Option name="LAYOUT.MINIMAL_LAYER_DISTANCE" value="40"/>
+<y:Option name="LAYOUT.MINIMAL_EDGE_DISTANCE" value="10"/>
+<y:Option name="LAYOUT.NODE_PLACEMENT" value="MEDIAN_SIMPLEX"/>
+<y:Option name="GROUPING.ENABLE_GLOBAL_SEQUENCING" value="true"/>
+<y:Option name="LAYOUT.ACT_ON_SELECTION_ONLY" value="false"/>
+<y:Option name="LAYOUT.MAXIMAL_DURATION" value="5"/>
+</y:Processor>
+</y:Postprocessors>
+</g:data>
+</g:graph>
+</g:graphml>
