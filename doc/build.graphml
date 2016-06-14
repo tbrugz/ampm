@@ -75,11 +75,11 @@
 </y:ShapeNode>
 </g:data>
 </g:node>
-<g:node id="is-installed-mvn">
+<g:node id="z-is-installed-mvn">
 <g:data key="d0">
 <y:ShapeNode>
 <y:Fill color="#CCCCFF"/>
-<y:NodeLabel>is-installed-mvn</y:NodeLabel>
+<y:NodeLabel>z-is-installed-mvn</y:NodeLabel>
 </y:ShapeNode>
 </g:data>
 </g:node>
@@ -160,6 +160,22 @@
 <y:ShapeNode>
 <y:Fill color="#CCCCFF"/>
 <y:NodeLabel>get-artifact-latest-version</y:NodeLabel>
+</y:ShapeNode>
+</g:data>
+</g:node>
+<g:node id="z-list-organizations-v0">
+<g:data key="d0">
+<y:ShapeNode>
+<y:Fill color="#CCCCFF"/>
+<y:NodeLabel>z-list-organizations-v0</y:NodeLabel>
+</y:ShapeNode>
+</g:data>
+</g:node>
+<g:node id="list-organizations">
+<g:data key="d0">
+<y:ShapeNode>
+<y:Fill color="#8888FF"/>
+<y:NodeLabel>list-organizations</y:NodeLabel>
 </y:ShapeNode>
 </g:data>
 </g:node>
@@ -251,7 +267,7 @@
 </y:PolyLineEdge>
 </g:data>
 </g:edge>
-<g:edge target="is-installed-mvn" source="artifact-with-version-deps">
+<g:edge target="z-is-installed-mvn" source="artifact-with-version-deps">
 <g:data key="d1">
 <y:PolyLineEdge>
 <y:LineStyle color="#000000" width="1.0" type="line"/>
@@ -332,6 +348,22 @@
 </g:data>
 </g:edge>
 <g:edge target="get-artifact-latest-version" source="artifact-deps">
+<g:data key="d1">
+<y:PolyLineEdge>
+<y:LineStyle color="#000000" width="1.0" type="line"/>
+<y:Arrows source="standard" target="none"/>
+</y:PolyLineEdge>
+</g:data>
+</g:edge>
+<g:edge target="z-list-organizations-v0" source="prepare">
+<g:data key="d1">
+<y:PolyLineEdge>
+<y:LineStyle color="#000000" width="1.0" type="line"/>
+<y:Arrows source="standard" target="none"/>
+</y:PolyLineEdge>
+</g:data>
+</g:edge>
+<g:edge target="list-organizations" source="prepare">
 <g:data key="d1">
 <y:PolyLineEdge>
 <y:LineStyle color="#000000" width="1.0" type="line"/>
