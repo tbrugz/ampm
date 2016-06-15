@@ -371,7 +371,7 @@
 
 	<!-- ant.project.invoked-targets -->
 	<target name="list-something" depends="prepare">
-		<property name="list.maxVersionToShow" value="4"/>
+		<property name="list.maxVersionsToShow" value="4"/>
 		<script language="javascript">
 			<![CDATA[
 			var File = java.io.File;
@@ -385,6 +385,23 @@
 				} else {
 					return (str + pad).substring(0, pad.length);
 				}
+			}
+
+			// http://stackoverflow.com/a/16187766/616413
+			function cmpVersions(a, b) {
+				var i, diff;
+				var regExStrip0 = /(\.0+)+$/;
+				var segmentsA = a.replace(regExStrip0, '').split('.');
+				var segmentsB = b.replace(regExStrip0, '').split('.');
+				var l = Math.min(segmentsA.length, segmentsB.length);
+
+				for (i = 0; i < l; i++) {
+					diff = parseInt(segmentsA[i], 10) - parseInt(segmentsB[i], 10);
+					if (diff) {
+						return diff;
+					}
+				}
+				return segmentsA.length - segmentsB.length;
 			}
 
 			var fs = project.createDataType("fileset");
@@ -423,7 +440,7 @@
 			var maxArtLen = "<< artifact >>".length+1;
 			var maxArtVersionsLen = 1;
 			var maxArtVersionLen = 1;
-			var maxVersionsToShow = parseInt(project.getProperty("list.maxVersionToShow"));
+			var maxVersionsToShow = parseInt(project.getProperty("list.maxVersionsToShow"));
 
 			// create echo Task via Ant API
 			var echo = project.createTask("echo");
@@ -498,10 +515,11 @@
 
 			if(doListArt) {
 				var akeys = Object.keys(arts);
+				var versionsSum = 0;
 				if(akeys.length>0) {
 					var artsVersionsStr = {};
 					for ( i = 0; i < akeys.length; i++ ) {
-						var vers = artsVersions[akeys[i]];
+						var vers = artsVersions[akeys[i]].sort(cmpVersions);
 						var str = "";
 						var len = 1
 						if(vers.length > maxVersionsToShow) {
@@ -514,6 +532,7 @@
 						artsVersionsStr[akeys[i]] = str;
 						len = str.length + 1;
 						maxArtVersionsLen = Math.max(maxArtVersionsLen, len);
+						versionsSum += vers.length;
 					}
 
 					var pad1 = Array(maxArtLen).join(' ');
@@ -530,7 +549,7 @@
 						//print(akeys[i] + ": #"+arts[akeys[i]] + " ; last = " + max + " ; versions = "+artsVersions[akeys[i]]);
 					}
 				}
-				print( "\n# of artifacts found = "+akeys.length);
+				print( "\n# of artifacts found = " + akeys.length + "  [#artifacts x versions = " + versionsSum + "]");
 			}
 			]]>
 		</script>
