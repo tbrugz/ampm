@@ -127,6 +127,11 @@ or: `ant -DgroupId=org list-organizations` (organizations from `org.`)
 or: `ant -DgroupId=o* list-organizations` (organizations starting with `o`)  
 or: `ant list-organizations` (list all)
 
+List artifacts:  
+`ant -DgroupId=ch.qos.log* list` (artifacts from organizations starting with `ch.qos.log`)  
+or: `ant -DgroupId=org.slf4j -Dlist.maxVersionToShow=7 list` (artifacts from `org.slf4j` - show up to 7 versions)  
+or: `ant list` (list all artifacts)
+
 
 end notes
 ------

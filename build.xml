@@ -298,6 +298,7 @@
 
 		<!-- http://stackoverflow.com/questions/25542102/ant-task-to-split-the-given-strings -->
 		<script language="javascript">
+			<![CDATA[
 			/*console = {
 				log: print,
 				warn: print,
@@ -313,6 +314,7 @@
 			if(idx>=0) {
 				project.setProperty('artifact.latestVersion', valueArr[idx]);
 			}
+			]]>
 		</script>
 		<!--<echo message="idx: ${idx}"/>-->
 		<echo message="artifact.latestVersion: ${artifact.latestVersion}"/>
@@ -330,6 +332,7 @@
 
 		<!-- http://stackoverflow.com/questions/22503100/java-8-javascript-engine-backwards-compatibility -->
 		<script language="javascript">
+			<![CDATA[
 			//var File = java.io.File;
 			//var jsonstr = new File( project.getProperty("artifact.url.resp.file") );
 			var jsonstr = project.getProperty("artifact.json.content");
@@ -345,6 +348,7 @@
 				}
 				project.setProperty('artifact.latestVersion', json.response.docs[0].latestVersion);
 			}
+			]]>
 		</script>
 		<echo message="artifact.latestVersion: ${artifact.latestVersion}" if:set="artifact.latestVersion"/>
 	</target>
@@ -365,7 +369,9 @@
 		<echo message="${orgs.path.string}" />
 	</target>
 
-	<target name="list-organizations" depends="prepare" description="List organizations with artifacts in the local repo">
+	<!-- ant.project.invoked-targets -->
+	<target name="list-something" depends="prepare">
+		<property name="list.maxVersionToShow" value="4"/>
 		<script language="javascript">
 			<![CDATA[
 			var File = java.io.File;
@@ -383,11 +389,21 @@
 
 			var fs = project.createDataType("fileset");
 			var dir = project.getProperty("maven.repo.dir");
+			var targets = project.getProperty("ant.project.invoked-targets");
+			var doListOrg = targets.search(/\blist-organizations\b/) >= 0;
+			var doListArt = targets.search(/\blist\b/) >= 0;
+			//print("targets: ", targets, " ; listOrg: ", doListOrg, " ; listArt: ", doListArt);
+
 			var groupId = project.getProperty("groupId");
+			var artifactId = project.getProperty("artifactId");
+
 			fs.setDir( new File( dir ) );
 			var includes = "";
 			if(groupId) {
 				includes += groupId.replace(/\./g, "/") + "/"
+			}
+			if(artifactId) {
+				includes += "**/" + artifactId + "/"
 			}
 			includes += "**/*.pom";
 			if(groupId) {
@@ -401,8 +417,13 @@
 
 			//artifacts
 			var arts = {};
+			var artsVersions = {};
 
 			var maxOrgLen = "<< organization >>".length+1;
+			var maxArtLen = "<< artifact >>".length+1;
+			var maxArtVersionsLen = 1;
+			var maxArtVersionLen = 1;
+			var maxVersionsToShow = parseInt(project.getProperty("list.maxVersionToShow"));
 
 			// create echo Task via Ant API
 			var echo = project.createTask("echo");
@@ -416,8 +437,9 @@
 				var orgstr = org.join(".");
 				var art = parts[parts.length-3];
 				var artstr = orgstr+":"+art;
+				var artVersion = parts[parts.length-2];
 
-				//print("orgstr: ", orgstr, "; art: ", art);
+				//print("orgstr: ", orgstr, "; art: ", art, "; artVersion: ", artVersion);
 
 				if(orgs[orgstr]!=null) {
 					orgs[orgstr]++
@@ -434,6 +456,11 @@
 				}
 				else {
 					arts[artstr] = 1;
+					artsVersions[artstr] = [];
+					if(maxArtLen<artstr.length) {
+						maxArtLen = artstr.length+1;
+					}
+
 					if(orgsArt[orgstr]!=null) {
 						orgsArt[orgstr]++
 					}
@@ -441,6 +468,9 @@
 						orgsArt[orgstr] = 1;
 					}
 				}
+				artsVersions[artstr].push(artVersion);
+				//maxArtVersionsLen = Math.max(maxArtVersionsLen, artsVersions[artstr].join(",").length+1);
+				maxArtVersionLen = Math.max(maxArtVersionLen, artVersion.length+1);
 
 				//print(parts.length, " - ", parts);
 
@@ -449,28 +479,67 @@
 				//echo.perform( );
 			}
 
-			//print(">>>>> organizations: # of artifacts ; # of artifacts x versions");
-			var okeys = Object.keys(orgs);
-			var padding = Array(maxOrgLen).join(' ');
-			var pad2 = Array("#artifacts".length).join(' ');
-			var pad3 = Array("#artfcts-x-vrs".length).join(' ');
-			if(okeys.length>0) {
-				print( pad(padding, "<< organization >>") + "  #artifacts   #artfcts-x-vrs");
-				for ( i = 0; i < okeys.length; i++ ) {
-					//print(okeys[i]+": #artifacts="+orgsArt[okeys[i]]+" ; #artifacts-x-versions="+orgs[okeys[i]]);
-					print( pad(padding, okeys[i]) +"   "+pad(pad2, orgsArt[okeys[i]], true)+"    "+pad(pad3, orgs[okeys[i]], true) );
+			if(doListOrg) {
+				//print(">>>>> organizations: # of artifacts ; # of artifacts x versions");
+				var okeys = Object.keys(orgs);
+				if(okeys.length>0) {
+					var pad1 = Array(maxOrgLen).join(' ');
+					var pad2 = Array("#artifacts".length).join(' ');
+					var pad3 = Array("#artfcts-x-vrs".length).join(' ');
+					print( pad(pad1, "<< organization >>") + "  #artifacts   #artfcts-x-vrs");
+
+					for ( i = 0; i < okeys.length; i++ ) {
+						//print(okeys[i]+": #artifacts="+orgsArt[okeys[i]]+" ; #artifacts-x-versions="+orgs[okeys[i]]);
+						print( pad(pad1, okeys[i]) +"   "+pad(pad2, orgsArt[okeys[i]], true)+"    "+pad(pad3, orgs[okeys[i]], true) );
+					}
 				}
+				print( "\n# of organizations found = "+okeys.length);
 			}
-			print( "\n# of organizations found = "+okeys.length);
 
-			//print("\n>>>>> artifacts: #versions");
-			//var akeys = Object.keys(arts);
-			//for ( i = 0; i < akeys.length; i++ ) {
-			//	print(akeys[i]+": #"+arts[akeys[i]]);
-			//}
+			if(doListArt) {
+				var akeys = Object.keys(arts);
+				if(akeys.length>0) {
+					var artsVersionsStr = {};
+					for ( i = 0; i < akeys.length; i++ ) {
+						var vers = artsVersions[akeys[i]];
+						var str = "";
+						var len = 1
+						if(vers.length > maxVersionsToShow) {
+							str = vers[0] + ",...," + vers.slice(vers.length-maxVersionsToShow+1).join(",");
+							//str = vers[0] + ",...," + vers.slice(parts.length-maxVersionsToShow+1, parts.length-1).join(",");
+						}
+						else {
+							str = vers.join(",");
+						}
+						artsVersionsStr[akeys[i]] = str;
+						len = str.length + 1;
+						maxArtVersionsLen = Math.max(maxArtVersionsLen, len);
+					}
 
+					var pad1 = Array(maxArtLen).join(' ');
+					var pad2 = Array("#versions".length+3).join(' ');
+					var pad3 = Array(Math.max("last-version".length, maxArtVersionLen)+3).join(' ');
+					var pad4 = Array(Math.max("versions".length, maxArtVersionsLen)+2).join(' ');
+
+					print( pad(pad1, "<< artifact >>") + pad(pad2, "#versions", true) + pad(pad3, "last-version", true) + pad(pad4, "versions", true) );
+					//print("<< artifact >> ; #versions");
+					for ( i = 0; i < akeys.length; i++ ) {
+						//var min = artsVersions[akeys[i]][0];
+						var max = artsVersions[akeys[i]][arts[akeys[i]]-1];
+						print( pad(pad1, akeys[i]) + pad(pad2, artsVersions[akeys[i]].length, true) + pad(pad3, max, true) + pad(pad4, artsVersionsStr[akeys[i]], true) );
+						//print(akeys[i] + ": #"+arts[akeys[i]] + " ; last = " + max + " ; versions = "+artsVersions[akeys[i]]);
+					}
+				}
+				print( "\n# of artifacts found = "+akeys.length);
+			}
 			]]>
 		</script>
+	</target>
+
+	<target name="list-organizations" depends="list-something" description="List organizations with artifacts in the local repo">
+	</target>
+
+	<target name="list" depends="list-something" description="List artifacts in the local repo">
 	</target>
 
 </project>
