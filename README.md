@@ -132,6 +132,9 @@ List artifacts:
 or: `ant -DgroupId=org.slf4j -Dlist.maxVersionsToShow=7 list` (artifacts from `org.slf4j` - show up to 7 versions)  
 or: `ant list` (list all artifacts)
 
+Show artifact details:  
+`ant -DgroupId=org.apache.cxf -DartifactId=cxf -Dversion=2.4.6 show`
+
 
 end notes
 ------

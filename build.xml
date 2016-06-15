@@ -182,7 +182,7 @@
 		</artifact:mvn>
 	</target>
 
-	<target name="set-groupId-path" depends="artifact-with-version-deps">
+	<target name="set-groupId-path" depends="artifact-deps">
 		<loadresource property="groupId.path">
 			<propertyresource name="groupId" />
 			<filterchain>
@@ -194,13 +194,14 @@
 		</loadresource>
 	</target>
 
-	<target name="is-installed" depends="set-groupId-path" description="Tests if artifact is installed">
+	<target name="is-installed" depends="set-groupId-path, artifact-with-version-deps" description="Tests if artifact is installed">
 		<!-- http://stackoverflow.com/questions/1176071/replacing-characters-in-ant-property -->
 
 		<!--property name="testdir" location="${maven.repo.dir}/${groupId.path}/${artifactId}/${version}" />
 		<echo message="testdir: ${testdir}"/>
 		<available file="${testdir}" type="dir" property="is.installed"/-->
 
+		<!-- XXX: should test for '.pom'? -->
 		<property name="testfile" location="${maven.repo.dir}/${groupId.path}/${artifactId}/${version}/${artifactId}-${version}.jar" />
 		<echo message="testfile: ${testfile}"/>
 		<available file="${testfile}" type="file" property="is.installed"/>
@@ -225,7 +226,7 @@
 		</artifact:mvn>
 	</target>
 
-	<target name="uninstall" depends="set-groupId-path" description="Uninstalls an artifact (not its dependencies)">
+	<target name="uninstall" depends="set-groupId-path, artifact-with-version-deps" description="Uninstalls an artifact (not its dependencies)">
 		<property name="artifact.dir" location="${maven.repo.dir}/${groupId.path}/${artifactId}/${version}" />
 
 		<echo message="artifact.dir: ${artifact.dir}"/>
@@ -320,7 +321,7 @@
 		<echo message="artifact.latestVersion: ${artifact.latestVersion}"/>
 	</target>
 
-	<target name="get-artifact-latest-version" depends="artifact-deps" if="useLatestVersion" unless="version">
+	<target name="get-artifact-latest-version" depends="artifact-deps" if="useLatestVersion">
 		<property name="artifact.url.check" value="http://search.maven.org/solrsearch/select?q=g:${groupId}+AND+a:${artifactId}&amp;rows=20&amp;wt=json"/>
 		<tstamp>
 			<format property="now" pattern="yyyyMMddHHmmssSSS"/>
@@ -406,13 +407,19 @@
 
 			var fs = project.createDataType("fileset");
 			var dir = project.getProperty("maven.repo.dir");
-			var targets = project.getProperty("ant.project.invoked-targets");
-			var doListOrg = targets.search(/\blist-organizations\b/) >= 0;
-			var doListArt = targets.search(/\blist\b/) >= 0;
+			//var targets = project.getProperty("ant.project.invoked-targets");
+			//var doListOrg = targets.search(/\blist-organizations\b/) >= 0;
+			//var doListArt = targets.search(/\blist\b/) >= 0;
+			var doListOrg = project.getProperty("list.listOrganizations")!=null;
+			var doListArt = project.getProperty("list.listArtifacts")!=null;
+
 			//print("targets: ", targets, " ; listOrg: ", doListOrg, " ; listArt: ", doListArt);
 
 			var groupId = project.getProperty("groupId");
 			var artifactId = project.getProperty("artifactId");
+
+			var maxVersionsToShow = parseInt(project.getProperty("list.maxVersionsToShow"));
+			var listUsePattern = project.getProperty("list.usePattern");
 
 			fs.setDir( new File( dir ) );
 			var includes = "";
@@ -420,7 +427,7 @@
 				includes += groupId.replace(/\./g, "/") + "/"
 			}
 			if(artifactId) {
-				includes += "**/" + artifactId + "/"
+				includes += (listUsePattern ? "**/" : "" ) + artifactId + "/"
 			}
 			includes += "**/*.pom";
 			if(groupId) {
@@ -440,10 +447,9 @@
 			var maxArtLen = "<< artifact >>".length+1;
 			var maxArtVersionsLen = 1;
 			var maxArtVersionLen = 1;
-			var maxVersionsToShow = parseInt(project.getProperty("list.maxVersionsToShow"));
 
 			// create echo Task via Ant API
-			var echo = project.createTask("echo");
+			//var echo = project.createTask("echo");
 
 			// iterate over files found.
 			var srcFiles = fs.getDirectoryScanner( project ).getIncludedFiles( );
@@ -555,10 +561,50 @@
 		</script>
 	</target>
 
-	<target name="list-organizations" depends="list-something" description="List organizations with artifacts in the local repo">
+	<target name="set-list-list-orgs">
+		<property name="list.listOrganizations" value="true" />
 	</target>
 
-	<target name="list" depends="list-something" description="List artifacts in the local repo">
+	<target name="set-list-list-artifacts">
+		<property name="list.listArtifacts" value="true" />
+	</target>
+
+	<target name="set-list-use-pattern">
+		<property name="list.usePattern" value="true" />
+	</target>
+
+	<target name="list-organizations" depends="set-list-use-pattern, set-list-list-orgs, list-something" description="List organizations with artifacts in the local repo">
+	</target>
+
+	<target name="list" depends="set-list-use-pattern, set-list-list-artifacts, list-something" description="List artifacts in the local repo">
+	</target>
+
+	<target name="show" depends="set-useLatestVersion, set-groupId-path, get-artifact-latest-version, set-list-list-artifacts, list-something" description="Show artifact info">
+		<property name="artifact.pom.path" location="${maven.repo.dir}/${groupId.path}/${artifactId}/${version}/${artifactId}-${version}.pom" />
+		<available file="${artifact.pom.path}" type="file" property="pom.is.installed"/>
+		<echo message="artifact.version: ${version}" if:set="version"/>
+		<echo message="artifact.pom.path: ${artifact.pom.path}" if:set="version"/>
+		<echo message="artifact.latestVersion: ${artifact.latestVersion}"/>
+		<echo message="no version defined (use 'version' param)" unless:set="version"/>
+
+		<!--<property name="pom.is.installed" value="false" />
+		<echo message="installed: ${pom.is.installed}"/>-->
+
+		<sequential if:set="pom.is.installed">
+			<xmlproperty file="${artifact.pom.path}" prefix="pom" collapseAttributes="true"/>
+			<echo message="project.name: ${pom.project.name}"/>
+			<echo message="project.description: ${pom.project.description}"/>
+			<echo message="project.url: ${pom.project.url}"/>
+		</sequential>
+
+		<echo message="artifact not installed/found" unless:set="pom.is.installed"/>
+
+		<!-- http://maven.apache.org/ant-tasks/examples/dependencies.html -->
+		<!--<artifact:dependencies filesetId="pom.deps.fileset" type="jar">
+			<pom file="${artifact.pom.path}"/>
+		</artifact:dependencies>-->
+		<!-- http://maven.apache.org/plugins/maven-dependency-plugin/tree-mojo.html -->
+		<!--<echoproperties prefix="pom"/>-->
 	</target>
 
 </project>
