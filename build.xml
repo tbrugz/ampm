@@ -3,7 +3,7 @@
 	xmlns:if="ant:if" xmlns:unless="ant:unless">
 	<!-- xmlns:ivy="antlib:org.apache.ivy.ant" -->
 
-	<property name="project.version" value="0.2"/>
+	<property name="project.version" value="0.3"/>
 	<property name="config.file" value=".mvnrun.properties"/>
 
 	<!-- required by ant:if - https://ant.apache.org/manual/ifunless.html -->
@@ -168,20 +168,6 @@
 		</java>
 	</target>
 
-	<!-- @Unused -->
-	<target name="z-is-installed-mvn" depends="artifact-with-version-deps">
-		<!--  description="Test if artifact is installed (mvn version)" -->
-		<!-- TODO: add target to update only 'maven-dependency-plugin' -->
-		<!-- http://stackoverflow.com/questions/10177292/how-to-determine-if-a-maven-artifact-is-in-my-repo-from-command-line -->
-		<artifact:mvn>
-			<arg value="org.apache.maven.plugins:maven-dependency-plugin:2.1:get"/>
-			<!-- <arg value="dependency:get"/> -->
-			<arg value="-Dartifact=${groupId}:${artifactId}:${version}"/>
-			<arg value="-o"/>
-			<arg value="-DrepoUrl=${maven.repo.dir}"/>
-		</artifact:mvn>
-	</target>
-
 	<target name="set-groupId-path" depends="artifact-deps">
 		<loadresource property="groupId.path">
 			<propertyresource name="groupId" />
@@ -275,52 +261,6 @@
 		<echo message="artifact.latestVersion: ${artifact.latestVersion}"/>
 	</target>
 
-	<!-- @Unused -->
-	<target name="z-old-get-artifact-latest-version" depends="artifact-deps" if="useLatestVersion" unless="version">
-		<property name="artifact.url.check" value="http://search.maven.org/solrsearch/select?q=g:${groupId}+AND+a:${artifactId}&amp;rows=20&amp;wt=xml"/>
-		<tstamp>
-			<format property="now" pattern="yyyyMMddHHmmssSSS"/>
-		</tstamp>
-
-		<tempfile property="artifact.url.resp.file" destdir="${java.io.tmpdir}" prefix="${ant.project.name}" suffix=".xml" deleteonexit="true"/>
-		<!--property name="artifact.url.resp.file" value="${java.io.tmpdir}/${ant.project.name}.${now}.response.xml"/-->
-		<!-- <echo message="artifact.url.check: ${artifact.url.check}"/>
-		<echo message="artifact.url.resp.file: ${artifact.url.resp.file}"/-->
-
-		<get src="${artifact.url.check}" dest="${artifact.url.resp.file}"/>
-		<!-- TODO: use javascript to parse REST return -->
-		<xmlproperty file="${artifact.url.resp.file}" prefix="mvnsearch" collapseattributes="true"/>
-		<!--<echoproperties prefix="mvnsearch"/>-->
-
-		<!--mvnsearch.response.result.doc.str.name
-		mvnsearch.response.result.doc.str=calc,com.github.javadev,com.github.javadev\:calc,1.0,jar,central
-		mvnsearch.response.result.doc.str.name=a,g,id,latestVersion,p,repositoryId
-		mvnsearch.response.result.numFound=1-->
-
-		<!-- http://stackoverflow.com/questions/25542102/ant-task-to-split-the-given-strings -->
-		<script language="javascript">
-			<![CDATA[
-			/*console = {
-				log: print,
-				warn: print,
-				error: print
-			};*/
-			var nameArr = (project.getProperty('mvnsearch.response.result.doc.str.name')+"").split(',');
-			var valueArr = (project.getProperty('mvnsearch.response.result.doc.str')+"").split(',');
-			var idx = nameArr.indexOf('latestVersion');
-			//console.log("nameArr", nameArr, typeof nameArr);
-			//console.log("valueArr", valueArr, typeof valueArr);
-
-			//project.setProperty('idx', idx);
-			if(idx>=0) {
-				project.setProperty('artifact.latestVersion', valueArr[idx]);
-			}
-			]]>
-		</script>
-		<!--<echo message="idx: ${idx}"/>-->
-		<echo message="artifact.latestVersion: ${artifact.latestVersion}"/>
-	</target>
-
 	<target name="get-artifact-latest-version" depends="artifact-deps" if="useLatestVersion">
 		<property name="artifact.url.check" value="http://search.maven.org/solrsearch/select?q=g:${groupId}+AND+a:${artifactId}&amp;rows=20&amp;wt=json"/>
 		<tstamp>
@@ -352,22 +292,6 @@
 			]]>
 		</script>
 		<echo message="artifact.latestVersion: ${artifact.latestVersion}" if:set="artifact.latestVersion"/>
-	</target>
-
-	<!-- @Unused -->
-	<target name="z-list-organizations-v0" depends="prepare">
-		<!-- http://stackoverflow.com/questions/3934309/echoing-out-ant-fileset-to-screen-for-debugging -->
-
-		<fileset id="orgs.path" dir="${maven.repo.dir}">
-			<include name="**/*.pom"/>
-		</fileset>
-		<!--<echo message="orgs: ${toString:orgs.path}" />-->
-		<pathconvert pathsep="${line.separator}"
-			property="orgs.path.string"
-			refid="orgs.path">
-			<map from="${maven.repo.dir}/" to=""/>
-		</pathconvert>
-		<echo message="${orgs.path.string}" />
 	</target>
 
 	<!-- ant.project.invoked-targets -->
@@ -407,9 +331,6 @@
 
 			var fs = project.createDataType("fileset");
 			var dir = project.getProperty("maven.repo.dir");
-			//var targets = project.getProperty("ant.project.invoked-targets");
-			//var doListOrg = targets.search(/\blist-organizations\b/) >= 0;
-			//var doListArt = targets.search(/\blist\b/) >= 0;
 			var doListOrg = project.getProperty("list.listOrganizations")!=null;
 			var doListArt = project.getProperty("list.listArtifacts")!=null;
 
@@ -512,7 +433,6 @@
 					print( pad(pad1, "<< organization >>") + "  #artifacts   #artfcts-x-vrs");
 
 					for ( i = 0; i < okeys.length; i++ ) {
-						//print(okeys[i]+": #artifacts="+orgsArt[okeys[i]]+" ; #artifacts-x-versions="+orgs[okeys[i]]);
 						print( pad(pad1, okeys[i]) +"   "+pad(pad2, orgsArt[okeys[i]], true)+"    "+pad(pad3, orgs[okeys[i]], true) );
 					}
 				}
@@ -530,7 +450,6 @@
 						var len = 1
 						if(vers.length > maxVersionsToShow) {
 							str = vers[0] + ",...," + vers.slice(vers.length-maxVersionsToShow+1).join(",");
-							//str = vers[0] + ",...," + vers.slice(parts.length-maxVersionsToShow+1, parts.length-1).join(",");
 						}
 						else {
 							str = vers.join(",");
@@ -547,12 +466,9 @@
 					var pad4 = Array(Math.max("versions".length, maxArtVersionsLen)+2).join(' ');
 
 					print( pad(pad1, "<< artifact >>") + pad(pad2, "#versions", true) + pad(pad3, "last-version", true) + pad(pad4, "versions", true) );
-					//print("<< artifact >> ; #versions");
 					for ( i = 0; i < akeys.length; i++ ) {
-						//var min = artsVersions[akeys[i]][0];
 						var max = artsVersions[akeys[i]][arts[akeys[i]]-1];
 						print( pad(pad1, akeys[i]) + pad(pad2, artsVersions[akeys[i]].length, true) + pad(pad3, max, true) + pad(pad4, artsVersionsStr[akeys[i]], true) );
-						//print(akeys[i] + ": #"+arts[akeys[i]] + " ; last = " + max + " ; versions = "+artsVersions[akeys[i]]);
 					}
 				}
 				print( "\n# of artifacts found = " + akeys.length + "  [#artifacts x versions = " + versionsSum + "]");

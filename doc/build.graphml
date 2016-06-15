@@ -75,14 +75,6 @@
 </y:ShapeNode>
 </g:data>
 </g:node>
-<g:node id="z-is-installed-mvn">
-<g:data key="d0">
-<y:ShapeNode>
-<y:Fill color="#CCCCFF"/>
-<y:NodeLabel>z-is-installed-mvn</y:NodeLabel>
-</y:ShapeNode>
-</g:data>
-</g:node>
 <g:node id="set-groupId-path">
 <g:data key="d0">
 <y:ShapeNode>
@@ -147,14 +139,6 @@
 </y:ShapeNode>
 </g:data>
 </g:node>
-<g:node id="z-old-get-artifact-latest-version">
-<g:data key="d0">
-<y:ShapeNode>
-<y:Fill color="#CCCCFF"/>
-<y:NodeLabel>z-old-get-artifact-latest-version</y:NodeLabel>
-</y:ShapeNode>
-</g:data>
-</g:node>
 <g:node id="get-artifact-latest-version">
 <g:data key="d0">
 <y:ShapeNode>
@@ -163,11 +147,35 @@
 </y:ShapeNode>
 </g:data>
 </g:node>
-<g:node id="z-list-organizations-v0">
+<g:node id="list-something">
 <g:data key="d0">
 <y:ShapeNode>
 <y:Fill color="#CCCCFF"/>
-<y:NodeLabel>z-list-organizations-v0</y:NodeLabel>
+<y:NodeLabel>list-something</y:NodeLabel>
+</y:ShapeNode>
+</g:data>
+</g:node>
+<g:node id="set-list-list-orgs">
+<g:data key="d0">
+<y:ShapeNode>
+<y:Fill color="#CCCCFF"/>
+<y:NodeLabel>set-list-list-orgs</y:NodeLabel>
+</y:ShapeNode>
+</g:data>
+</g:node>
+<g:node id="set-list-list-artifacts">
+<g:data key="d0">
+<y:ShapeNode>
+<y:Fill color="#CCCCFF"/>
+<y:NodeLabel>set-list-list-artifacts</y:NodeLabel>
+</y:ShapeNode>
+</g:data>
+</g:node>
+<g:node id="set-list-use-pattern">
+<g:data key="d0">
+<y:ShapeNode>
+<y:Fill color="#CCCCFF"/>
+<y:NodeLabel>set-list-use-pattern</y:NodeLabel>
 </y:ShapeNode>
 </g:data>
 </g:node>
@@ -176,6 +184,22 @@
 <y:ShapeNode>
 <y:Fill color="#8888FF"/>
 <y:NodeLabel>list-organizations</y:NodeLabel>
+</y:ShapeNode>
+</g:data>
+</g:node>
+<g:node id="list">
+<g:data key="d0">
+<y:ShapeNode>
+<y:Fill color="#8888FF"/>
+<y:NodeLabel>list</y:NodeLabel>
+</y:ShapeNode>
+</g:data>
+</g:node>
+<g:node id="show">
+<g:data key="d0">
+<y:ShapeNode>
+<y:Fill color="#8888FF"/>
+<y:NodeLabel>show</y:NodeLabel>
 </y:ShapeNode>
 </g:data>
 </g:node>
@@ -267,15 +291,7 @@
 </y:PolyLineEdge>
 </g:data>
 </g:edge>
-<g:edge target="z-is-installed-mvn" source="artifact-with-version-deps">
-<g:data key="d1">
-<y:PolyLineEdge>
-<y:LineStyle color="#000000" width="1.0" type="line"/>
-<y:Arrows source="standard" target="none"/>
-</y:PolyLineEdge>
-</g:data>
-</g:edge>
-<g:edge target="set-groupId-path" source="artifact-with-version-deps">
+<g:edge target="set-groupId-path" source="artifact-deps">
 <g:data key="d1">
 <y:PolyLineEdge>
 <y:LineStyle color="#000000" width="1.0" type="line"/>
@@ -284,6 +300,14 @@
 </g:data>
 </g:edge>
 <g:edge target="is-installed" source="set-groupId-path">
+<g:data key="d1">
+<y:PolyLineEdge>
+<y:LineStyle color="#000000" width="1.0" type="line"/>
+<y:Arrows source="standard" target="none"/>
+</y:PolyLineEdge>
+</g:data>
+</g:edge>
+<g:edge target="is-installed" source="artifact-with-version-deps">
 <g:data key="d1">
 <y:PolyLineEdge>
 <y:LineStyle color="#000000" width="1.0" type="line"/>
@@ -315,6 +339,14 @@
 </y:PolyLineEdge>
 </g:data>
 </g:edge>
+<g:edge target="uninstall" source="artifact-with-version-deps">
+<g:data key="d1">
+<y:PolyLineEdge>
+<y:LineStyle color="#000000" width="1.0" type="line"/>
+<y:Arrows source="standard" target="none"/>
+</y:PolyLineEdge>
+</g:data>
+</g:edge>
 <g:edge target="make-exec" source="run-deps">
 <g:data key="d1">
 <y:PolyLineEdge>
@@ -339,14 +371,6 @@
 </y:PolyLineEdge>
 </g:data>
 </g:edge>
-<g:edge target="z-old-get-artifact-latest-version" source="artifact-deps">
-<g:data key="d1">
-<y:PolyLineEdge>
-<y:LineStyle color="#000000" width="1.0" type="line"/>
-<y:Arrows source="standard" target="none"/>
-</y:PolyLineEdge>
-</g:data>
-</g:edge>
 <g:edge target="get-artifact-latest-version" source="artifact-deps">
 <g:data key="d1">
 <y:PolyLineEdge>
@@ -355,7 +379,7 @@
 </y:PolyLineEdge>
 </g:data>
 </g:edge>
-<g:edge target="z-list-organizations-v0" source="prepare">
+<g:edge target="list-something" source="prepare">
 <g:data key="d1">
 <y:PolyLineEdge>
 <y:LineStyle color="#000000" width="1.0" type="line"/>
@@ -363,7 +387,87 @@
 </y:PolyLineEdge>
 </g:data>
 </g:edge>
-<g:edge target="list-organizations" source="prepare">
+<g:edge target="list-organizations" source="set-list-use-pattern">
+<g:data key="d1">
+<y:PolyLineEdge>
+<y:LineStyle color="#000000" width="1.0" type="line"/>
+<y:Arrows source="standard" target="none"/>
+</y:PolyLineEdge>
+</g:data>
+</g:edge>
+<g:edge target="list-organizations" source="set-list-list-orgs">
+<g:data key="d1">
+<y:PolyLineEdge>
+<y:LineStyle color="#000000" width="1.0" type="line"/>
+<y:Arrows source="standard" target="none"/>
+</y:PolyLineEdge>
+</g:data>
+</g:edge>
+<g:edge target="list-organizations" source="list-something">
+<g:data key="d1">
+<y:PolyLineEdge>
+<y:LineStyle color="#000000" width="1.0" type="line"/>
+<y:Arrows source="standard" target="none"/>
+</y:PolyLineEdge>
+</g:data>
+</g:edge>
+<g:edge target="list" source="set-list-use-pattern">
+<g:data key="d1">
+<y:PolyLineEdge>
+<y:LineStyle color="#000000" width="1.0" type="line"/>
+<y:Arrows source="standard" target="none"/>
+</y:PolyLineEdge>
+</g:data>
+</g:edge>
+<g:edge target="list" source="set-list-list-artifacts">
+<g:data key="d1">
+<y:PolyLineEdge>
+<y:LineStyle color="#000000" width="1.0" type="line"/>
+<y:Arrows source="standard" target="none"/>
+</y:PolyLineEdge>
+</g:data>
+</g:edge>
+<g:edge target="list" source="list-something">
+<g:data key="d1">
+<y:PolyLineEdge>
+<y:LineStyle color="#000000" width="1.0" type="line"/>
+<y:Arrows source="standard" target="none"/>
+</y:PolyLineEdge>
+</g:data>
+</g:edge>
+<g:edge target="show" source="set-useLatestVersion">
+<g:data key="d1">
+<y:PolyLineEdge>
+<y:LineStyle color="#000000" width="1.0" type="line"/>
+<y:Arrows source="standard" target="none"/>
+</y:PolyLineEdge>
+</g:data>
+</g:edge>
+<g:edge target="show" source="set-groupId-path">
+<g:data key="d1">
+<y:PolyLineEdge>
+<y:LineStyle color="#000000" width="1.0" type="line"/>
+<y:Arrows source="standard" target="none"/>
+</y:PolyLineEdge>
+</g:data>
+</g:edge>
+<g:edge target="show" source="get-artifact-latest-version">
+<g:data key="d1">
+<y:PolyLineEdge>
+<y:LineStyle color="#000000" width="1.0" type="line"/>
+<y:Arrows source="standard" target="none"/>
+</y:PolyLineEdge>
+</g:data>
+</g:edge>
+<g:edge target="show" source="set-list-list-artifacts">
+<g:data key="d1">
+<y:PolyLineEdge>
+<y:LineStyle color="#000000" width="1.0" type="line"/>
+<y:Arrows source="standard" target="none"/>
+</y:PolyLineEdge>
+</g:data>
+</g:edge>
+<g:edge target="show" source="list-something">
 <g:data key="d1">
 <y:PolyLineEdge>
 <y:LineStyle color="#000000" width="1.0" type="line"/>
