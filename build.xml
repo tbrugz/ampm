@@ -90,8 +90,12 @@
 	<target name="prepare" depends="ant-version-check">
 		<!-- setting 'maven.repo.dir' -->
 		<property name="maven.user.settings.file" location="${maven.user.dir}/settings.xml"/>
+		<property name="maven.global.settings.file" location="${maven.home}/conf/settings.xml"/>
 		<xmlproperty file="${maven.user.settings.file}" prefix="mvnsettings" collapseAttributes="true"/>
-		<!--<echoproperties prefix="mvnsettings"/>-->
+		<xmlproperty file="${maven.global.settings.file}" prefix="mvnsettings" collapseAttributes="true"/>
+
+		<!--<echo message="maven.home: ${maven.home}"/>
+		<echoproperties prefix="mvnsettings"/>-->
 		<property name="maven.repo.dir" location="${mvnsettings.settings.localRepository}" if:set="mvnsettings.settings.localRepository"/>
 		<property name="maven.repo.dir" location="${maven.user.dir}/repository"/>
 	</target>
