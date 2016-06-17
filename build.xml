@@ -52,7 +52,7 @@
 		</sequential>
 	</macrodef>
 
-	<target name="info" depends="prepare" description="Shows basic info">
+	<target name="info" depends="prepare" description="Shows basic environment info">
 		<!--<echo message="ant.project.name: ${ant.project.name}" />
 		<echo message="project.version: ${project.version}" />-->
 		<echo message="ant.file: ${ant.file}" />
@@ -259,9 +259,31 @@
 
 	<target name="check-latest-version" depends="set-useLatestVersion, get-artifact-latest-version" description="Checks artifact's latest version in Maven Central">
 		<echo message="artifact.latestVersion: ${artifact.latestVersion}"/>
+		<echo message="artifact.lastUpdated: ${artifact.lastUpdated}"/>
 	</target>
 
-	<target name="get-artifact-latest-version" depends="artifact-deps" if="useLatestVersion">
+	<target name="get-artifact-latest-version" depends="set-groupId-path" if="useLatestVersion">
+		<property name="artifact.url.check" value="${maven.repo.remote}/${groupId.path}/${artifactId}/maven-metadata.xml"/>
+		<echo message="artifact.url.check: ${artifact.url.check}" />
+		<tstamp>
+			<format property="now" pattern="yyyyMMddHHmmssSSS"/>
+		</tstamp>
+
+		<tempfile property="artifact.url.resp.file" destdir="${java.io.tmpdir}" prefix="${ant.project.name}" suffix=".xml" deleteonexit="true"/>
+		<get src="${artifact.url.check}" dest="${artifact.url.resp.file}"/>
+
+		<xmlproperty file="${artifact.url.resp.file}" prefix="mvnmeta" collapseAttributes="true"/>
+		<!--
+		<echoproperties prefix="mvnmeta"/>
+		mvnmeta.metadata.versioning.lastUpdated
+		mvnmeta.metadata.versioning.latest
+		mvnmeta.metadata.versioning.release
+		-->
+		<property name="artifact.latestVersion" value="${mvnmeta.metadata.versioning.latest}" />
+		<property name="artifact.lastUpdated" value="${mvnmeta.metadata.versioning.lastUpdated}" />
+	</target>
+
+	<target name="z-get-artifact-latest-version" depends="artifact-deps" if="useLatestVersion">
 		<property name="artifact.url.check" value="http://search.maven.org/solrsearch/select?q=g:${groupId}+AND+a:${artifactId}&amp;rows=20&amp;wt=json"/>
 		<tstamp>
 			<format property="now" pattern="yyyyMMddHHmmssSSS"/>
