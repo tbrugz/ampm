@@ -3,7 +3,7 @@
 	xmlns:if="ant:if" xmlns:unless="ant:unless">
 	<!-- xmlns:ivy="antlib:org.apache.ivy.ant" -->
 
-	<property name="project.version" value="0.3"/>
+	<property name="project.version" value="0.3.5"/>
 	<property name="config.file" value=".mvnrun.properties"/>
 
 	<!-- required by ant:if - https://ant.apache.org/manual/ifunless.html -->

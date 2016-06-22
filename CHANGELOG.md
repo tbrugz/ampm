@@ -2,7 +2,7 @@
 CHANGELOG
 =========
 
-### v-next
+### v0.3.5
 
 - [x] use http://repo1.maven.org/maven2/<org>/<artif>/maven-metadata.xml
     - latest, versions, lastUpdated
