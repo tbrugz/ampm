@@ -168,10 +168,10 @@
 		-->
 	</target>
 
-	<target name="artifact-with-version-deps" depends="artifact-deps, get-artifact-latest-version">
-		<!--antcall target="check-latest-version" if:set="useLatestVersion" unless:set="version"/-->
-
-		<property name="version" value="${artifact.latestVersion}" if:set="artifact.latestVersion"/>
+	<target name="artifact-with-version-deps" depends="artifact-deps, get-artifact-latest-version-if-no-version">
+		<sequential if:set="useLatestVersion">
+			<property name="version" value="${artifact.latestVersion}" if:set="artifact.latestVersion" />
+		</sequential>
 		<fail message="param 'version' undefined (for latest version, set 'useLatestVersion')" unless="version"/>
 	</target>
 
@@ -316,16 +316,20 @@
 		<echo message="executable written to: ${full.script.file}"/>
 	</target>
 
-	<target name="set-useLatestVersion">
-		<property name="useLatestVersion" value="true"/>
-	</target>
+	<!--<target name="set-checkLatestVersion">
+		<property name="checkLatestVersion" value="true"/>
+	</target>-->
 
-	<target name="check-latest-version" depends="set-useLatestVersion, get-artifact-latest-version" description="Checks artifact's latest version in Maven Central">
+	<!--<target name="check-latest-version" depends="set-checkLatestVersion, get-artifact-latest-version" description="Checks artifact's latest version in Maven Central">-->
+	<target name="check-latest-version" depends="get-artifact-latest-version" description="Checks artifact's latest version in Maven Central">
 		<echo message="artifact.latestVersion: ${artifact.latestVersion}"/>
 		<echo message="artifact.lastUpdated: ${artifact.lastUpdated}"/>
 	</target>
 
-	<target name="get-artifact-latest-version" depends="set-groupId-path" if="useLatestVersion">
+	<target name="get-artifact-latest-version-if-no-version" depends="get-artifact-latest-version" unless="version">
+	</target>
+
+	<target name="get-artifact-latest-version" depends="set-groupId-path">
 		<property name="artifact.url.check" value="${maven.repo.remote}/${groupId.path}/${artifactId}/maven-metadata.xml"/>
 		<echo message="artifact.url.check: ${artifact.url.check}" />
 		<tstamp>
@@ -580,13 +584,17 @@
 	<target name="list" depends="set-list-use-pattern, set-list-list-artifacts, list-something" description="List artifacts in the local repo">
 	</target>
 
-	<target name="show" depends="set-useLatestVersion, set-groupId-path, get-artifact-latest-version, set-list-list-artifacts, list-something" description="Show artifact info">
+	<!--<target name="show" depends="set-checkLatestVersion, set-groupId-path, get-artifact-latest-version, set-list-list-artifacts, list-something" description="Show artifact info">-->
+	<target name="show" depends="artifact-with-version-deps, set-list-list-artifacts, list-something" description="Show artifact info">
 		<property name="artifact.pom.path" location="${maven.repo.dir}/${groupId.path}/${artifactId}/${version}/${artifactId}-${version}.pom" />
 		<available file="${artifact.pom.path}" type="file" property="pom.is.installed"/>
 		<echo message="artifact.version: ${version}" if:set="version"/>
 		<echo message="artifact.pom.path: ${artifact.pom.path}" if:set="version"/>
 		<echo message="[remote] artifact.latestVersion: ${artifact.latestVersion}"/>
 		<echo message="[remote] artifact.lastUpdated: ${artifact.lastUpdated}"/>
+		<!--<sequential if:set="useLatestVersion">
+			<property name="version" value="${artifact.latestVersion}" if:set="artifact.latestVersion" />
+		</sequential>-->
 
 		<echo message="no version defined (use 'version' param)" unless:set="version"/>
 

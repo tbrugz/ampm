@@ -47,7 +47,9 @@ Run jetty-runner (replace `<some-dir>`):
 (and navigate to `http://localhost:8081/`)
 
 Run jetty-runner without `mainclass` property - extracted from MANIFEST (replace `<some-dir>`):  
-`ant -DgroupId=org.eclipse.jetty -DartifactId=jetty-runner -Dversion=9.3.10.M0 -Dargs="--port 8081 <some-dir>" run`
+`ant -DgroupId=org.eclipse.jetty -DartifactId=jetty-runner -Dversion=9.3.10.M0 -Dargs="--port 8081 <some-dir>" run`  
+or: `ant -Dartifact=org.eclipse.jetty:jetty-runner:9.3.10.M0 -Dargs="--port 8081 ." run`  
+(and navigate to `http://localhost:8081/`)
 
 Create executable script:  
 `ant -DgroupId=org.eclipse.jetty -DartifactId=jetty-runner -Dversion=9.3.10.M0 -Dmainclass=org.eclipse.jetty.runner.Runner make-exec`  
@@ -136,7 +138,8 @@ or: `ant list` (list all artifacts)
 
 Show artifact details:  
 `ant -DgroupId=org.apache.cxf -DartifactId=cxf -Dversion=2.4.6 show`  
-or: `ant -Dartifact=org.apache.cxf:cxf:2.4.6 show`
+or: `ant -Dartifact=org.apache.cxf:cxf:2.4.6 show`  
+or: `ant show -Dartifact=org.apache.struts:struts-core -DuseLatestVersion=1`
 
 
 end notes
