@@ -35,6 +35,14 @@
 </y:ShapeNode>
 </g:data>
 </g:node>
+<g:node id="artifact-split">
+<g:data key="d0">
+<y:ShapeNode>
+<y:Fill color="#CCCCFF"/>
+<y:NodeLabel>artifact-split</y:NodeLabel>
+</y:ShapeNode>
+</g:data>
+</g:node>
 <g:node id="artifact-deps">
 <g:data key="d0">
 <y:ShapeNode>
@@ -123,19 +131,19 @@
 </y:ShapeNode>
 </g:data>
 </g:node>
-<g:node id="set-useLatestVersion">
-<g:data key="d0">
-<y:ShapeNode>
-<y:Fill color="#CCCCFF"/>
-<y:NodeLabel>set-useLatestVersion</y:NodeLabel>
-</y:ShapeNode>
-</g:data>
-</g:node>
 <g:node id="check-latest-version">
 <g:data key="d0">
 <y:ShapeNode>
 <y:Fill color="#8888FF"/>
 <y:NodeLabel>check-latest-version</y:NodeLabel>
+</y:ShapeNode>
+</g:data>
+</g:node>
+<g:node id="get-artifact-latest-version-if-no-version">
+<g:data key="d0">
+<y:ShapeNode>
+<y:Fill color="#CCCCFF"/>
+<y:NodeLabel>get-artifact-latest-version-if-no-version</y:NodeLabel>
 </y:ShapeNode>
 </g:data>
 </g:node>
@@ -235,6 +243,14 @@
 </y:PolyLineEdge>
 </g:data>
 </g:edge>
+<g:edge target="artifact-deps" source="artifact-split">
+<g:data key="d1">
+<y:PolyLineEdge>
+<y:LineStyle color="#000000" width="1.0" type="line"/>
+<y:Arrows source="standard" target="none"/>
+</y:PolyLineEdge>
+</g:data>
+</g:edge>
 <g:edge target="artifact-with-version-deps" source="artifact-deps">
 <g:data key="d1">
 <y:PolyLineEdge>
@@ -243,7 +259,7 @@
 </y:PolyLineEdge>
 </g:data>
 </g:edge>
-<g:edge target="artifact-with-version-deps" source="get-artifact-latest-version">
+<g:edge target="artifact-with-version-deps" source="get-artifact-latest-version-if-no-version">
 <g:data key="d1">
 <y:PolyLineEdge>
 <y:LineStyle color="#000000" width="1.0" type="line"/>
@@ -355,14 +371,6 @@
 </y:PolyLineEdge>
 </g:data>
 </g:edge>
-<g:edge target="check-latest-version" source="set-useLatestVersion">
-<g:data key="d1">
-<y:PolyLineEdge>
-<y:LineStyle color="#000000" width="1.0" type="line"/>
-<y:Arrows source="standard" target="none"/>
-</y:PolyLineEdge>
-</g:data>
-</g:edge>
 <g:edge target="check-latest-version" source="get-artifact-latest-version">
 <g:data key="d1">
 <y:PolyLineEdge>
@@ -371,7 +379,15 @@
 </y:PolyLineEdge>
 </g:data>
 </g:edge>
-<g:edge target="get-artifact-latest-version" source="artifact-deps">
+<g:edge target="get-artifact-latest-version-if-no-version" source="get-artifact-latest-version">
+<g:data key="d1">
+<y:PolyLineEdge>
+<y:LineStyle color="#000000" width="1.0" type="line"/>
+<y:Arrows source="standard" target="none"/>
+</y:PolyLineEdge>
+</g:data>
+</g:edge>
+<g:edge target="get-artifact-latest-version" source="set-groupId-path">
 <g:data key="d1">
 <y:PolyLineEdge>
 <y:LineStyle color="#000000" width="1.0" type="line"/>
@@ -380,6 +396,14 @@
 </g:data>
 </g:edge>
 <g:edge target="list-something" source="prepare">
+<g:data key="d1">
+<y:PolyLineEdge>
+<y:LineStyle color="#000000" width="1.0" type="line"/>
+<y:Arrows source="standard" target="none"/>
+</y:PolyLineEdge>
+</g:data>
+</g:edge>
+<g:edge target="list-something" source="artifact-split">
 <g:data key="d1">
 <y:PolyLineEdge>
 <y:LineStyle color="#000000" width="1.0" type="line"/>
@@ -435,23 +459,7 @@
 </y:PolyLineEdge>
 </g:data>
 </g:edge>
-<g:edge target="show" source="set-useLatestVersion">
-<g:data key="d1">
-<y:PolyLineEdge>
-<y:LineStyle color="#000000" width="1.0" type="line"/>
-<y:Arrows source="standard" target="none"/>
-</y:PolyLineEdge>
-</g:data>
-</g:edge>
-<g:edge target="show" source="set-groupId-path">
-<g:data key="d1">
-<y:PolyLineEdge>
-<y:LineStyle color="#000000" width="1.0" type="line"/>
-<y:Arrows source="standard" target="none"/>
-</y:PolyLineEdge>
-</g:data>
-</g:edge>
-<g:edge target="show" source="get-artifact-latest-version">
+<g:edge target="show" source="artifact-with-version-deps">
 <g:data key="d1">
 <y:PolyLineEdge>
 <y:LineStyle color="#000000" width="1.0" type="line"/>

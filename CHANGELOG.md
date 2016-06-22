@@ -1,6 +1,6 @@
 
-NEWS
-====
+CHANGELOG
+=========
 
 ### v-next
 
