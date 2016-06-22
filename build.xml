@@ -100,7 +100,66 @@
 		<property name="maven.repo.dir" location="${maven.user.dir}/repository"/>
 	</target>
 
-	<target name="artifact-deps" depends="prepare">
+	<target name="artifact-split" if="artifact">
+		<!--<property name="artifact.partial.regex" value="(.*):(.*):"/>
+		<property name="artifact.full.regex" value="(.*):(.*):(.*)"/>-->
+		<loadresource property="groupId" unless:set="groupId">
+			<propertyresource name="artifact"/>
+			<filterchain>
+				<tokenfilter>
+					<filetokenizer/>
+					<replaceregex pattern=":.*$" replace="" />
+				</tokenfilter>
+			</filterchain>
+		</loadresource>
+
+		<condition property="containsArtifact">
+			<contains string="${artifact}" substring=":"/>
+		</condition>
+
+		<sequential if:set="containsArtifact">
+			<loadresource property="artifactAndVersion" unless:set="artifactId">
+				<propertyresource name="artifact"/>
+				<filterchain>
+					<tokenfilter>
+						<filetokenizer/>
+						<replaceregex pattern="^.*?:" replace="" />
+					</tokenfilter>
+				</filterchain>
+			</loadresource>
+
+			<condition property="containsVersion">
+				<contains string="${artifactAndVersion}" substring=":"/>
+			</condition>
+			<property name="artifactId" value="${artifactAndVersion}" unless:set="containsVersion"/>
+			<sequential if:set="containsVersion">
+				<loadresource property="artifactId">
+					<propertyresource name="artifactAndVersion"/>
+					<filterchain>
+						<tokenfilter>
+							<filetokenizer/>
+							<replaceregex pattern=":.*$" replace="" />
+						</tokenfilter>
+					</filterchain>
+				</loadresource>
+				<loadresource property="version">
+					<propertyresource name="artifactAndVersion"/>
+					<filterchain>
+						<tokenfilter>
+							<filetokenizer/>
+							<replaceregex pattern="^.*?:" replace="" />
+						</tokenfilter>
+					</filterchain>
+				</loadresource>
+			</sequential>
+
+		</sequential>
+
+		<echo message="groupId: ${groupId} ; artifactId: ${artifactId} ; version: ${version}"/>
+		<!--<echo message="groupId: ${groupId} ; artifactId: ${artifactId} ; version: ${version} ; artifactAndVersion: ${artifactAndVersion} - artifact: ${artifact}"/>-->
+	</target>
+
+	<target name="artifact-deps" depends="prepare, artifact-split">
 		<fail message="param 'groupId' undefined" unless="groupId" />
 		<fail message="param 'artifactId' undefined" unless="artifactId"/>
 		<!--
@@ -287,7 +346,7 @@
 		<property name="artifact.lastUpdated" value="${mvnmeta.metadata.versioning.lastUpdated}" />
 	</target>
 
-	<target name="z-get-artifact-latest-version" depends="artifact-deps" if="useLatestVersion">
+	<!--<target name="z-get-artifact-latest-version" depends="artifact-deps" if="useLatestVersion">
 		<property name="artifact.url.check" value="http://search.maven.org/solrsearch/select?q=g:${groupId}+AND+a:${artifactId}&amp;rows=20&amp;wt=json"/>
 		<tstamp>
 			<format property="now" pattern="yyyyMMddHHmmssSSS"/>
@@ -297,7 +356,7 @@
 		<get src="${artifact.url.check}" dest="${artifact.url.resp.file}"/>
 		<loadfile property="artifact.json.content" srcFile="${artifact.url.resp.file}"/>
 
-		<!-- http://stackoverflow.com/questions/22503100/java-8-javascript-engine-backwards-compatibility -->
+		<!- - http://stackoverflow.com/questions/22503100/java-8-javascript-engine-backwards-compatibility - ->
 		<script language="javascript">
 			<![CDATA[
 			//var File = java.io.File;
@@ -318,10 +377,10 @@
 			]]>
 		</script>
 		<echo message="artifact.latestVersion: ${artifact.latestVersion}" if:set="artifact.latestVersion"/>
-	</target>
+	</target-->
 
 	<!-- ant.project.invoked-targets -->
-	<target name="list-something" depends="prepare">
+	<target name="list-something" depends="prepare, artifact-split">
 		<property name="list.maxVersionsToShow" value="4"/>
 		<script language="javascript">
 			<![CDATA[
@@ -526,7 +585,9 @@
 		<available file="${artifact.pom.path}" type="file" property="pom.is.installed"/>
 		<echo message="artifact.version: ${version}" if:set="version"/>
 		<echo message="artifact.pom.path: ${artifact.pom.path}" if:set="version"/>
-		<echo message="artifact.latestVersion: ${artifact.latestVersion}"/>
+		<echo message="[remote] artifact.latestVersion: ${artifact.latestVersion}"/>
+		<echo message="[remote] artifact.lastUpdated: ${artifact.lastUpdated}"/>
+
 		<echo message="no version defined (use 'version' param)" unless:set="version"/>
 
 		<!--<property name="pom.is.installed" value="false" />

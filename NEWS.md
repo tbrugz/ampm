@@ -7,6 +7,7 @@ NEWS
 - [x] use http://repo1.maven.org/maven2/<org>/<artif>/maven-metadata.xml
     - latest, versions, lastUpdated
 - [x] check M2_HOME for settings.xml
+- [x] use "artifact" parameter
 
 
 ### v0.3
