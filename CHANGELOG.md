@@ -4,7 +4,7 @@ CHANGELOG
 
 ### v0.3.5
 
-- [x] use http://repo1.maven.org/maven2/<org>/<artif>/maven-metadata.xml
+- [x] use http://repo1.maven.org/maven2/[org]/[artifact]/maven-metadata.xml
     - latest, versions, lastUpdated
 - [x] check M2_HOME for settings.xml
 - [x] use "artifact" parameter

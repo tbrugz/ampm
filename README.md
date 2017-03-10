@@ -35,12 +35,12 @@ Test if jetty-runner is installed:
 `ant -DgroupId=org.eclipse.jetty -DartifactId=jetty-runner -Dversion=9.3.10.M0 is-installed`
 
 Check latest version avaiable in central:  
-`ant -DgroupId=org.eclipse.jetty -DartifactId=jetty-runner check-latest-version` or:  
-`ant -Dartifact=org.eclipse.jetty:jetty-runner check-latest-version`
+`ant -DgroupId=org.eclipse.jetty -DartifactId=jetty-runner check-latest-version`  
+or: `ant -Dartifact=org.eclipse.jetty:jetty-runner check-latest-version`
 
 Install jetty-runner and its dependencies:  
-`ant -DgroupId=org.eclipse.jetty -DartifactId=jetty-runner -Dversion=9.3.10.M0 install` or:  
-`ant -Dartifact=org.eclipse.jetty:jetty-runner:9.3.10.M0 install`
+`ant -DgroupId=org.eclipse.jetty -DartifactId=jetty-runner -Dversion=9.3.10.M0 install`  
+or: `ant -Dartifact=org.eclipse.jetty:jetty-runner:9.3.10.M0 install`
 
 Run jetty-runner (replace `<some-dir>`):  
 `ant -DgroupId=org.eclipse.jetty -DartifactId=jetty-runner -Dversion=9.3.10.M0 -Dmainclass=org.eclipse.jetty.runner.Runner -Dargs="--port 8081 <some-dir>" run`  
