@@ -36,11 +36,11 @@ Test if jetty-runner is installed:
 
 Check latest version avaiable in central:  
 `ant -DgroupId=org.eclipse.jetty -DartifactId=jetty-runner check-latest-version`  
-or: `ant -Dartifact=org.eclipse.jetty:jetty-runner check-latest-version`
+or: `ant -DartifactId=org.eclipse.jetty:jetty-runner check-latest-version`
 
 Install jetty-runner and its dependencies:  
 `ant -DgroupId=org.eclipse.jetty -DartifactId=jetty-runner -Dversion=9.3.10.M0 install`  
-or: `ant -Dartifact=org.eclipse.jetty:jetty-runner:9.3.10.M0 install`
+or: `ant -DartifactId=org.eclipse.jetty:jetty-runner:9.3.10.M0 install`
 
 Run jetty-runner (replace `<some-dir>`):  
 `ant -DgroupId=org.eclipse.jetty -DartifactId=jetty-runner -Dversion=9.3.10.M0 -Dmainclass=org.eclipse.jetty.runner.Runner -Dargs="--port 8081 <some-dir>" run`  
@@ -48,7 +48,7 @@ Run jetty-runner (replace `<some-dir>`):
 
 Run jetty-runner without `mainclass` property - extracted from MANIFEST (replace `<some-dir>`):  
 `ant -DgroupId=org.eclipse.jetty -DartifactId=jetty-runner -Dversion=9.3.10.M0 -Dargs="--port 8081 <some-dir>" run`  
-or: `ant -Dartifact=org.eclipse.jetty:jetty-runner:9.3.10.M0 -Dargs="--port 8081 ." run`  
+or: `ant -DartifactId=org.eclipse.jetty:jetty-runner:9.3.10.M0 -Dargs="--port 8081 ." run`  
 (and navigate to `http://localhost:8081/`)
 
 Create executable script:  
@@ -138,8 +138,8 @@ or: `ant list` (list all artifacts)
 
 Show artifact details:  
 `ant -DgroupId=org.apache.cxf -DartifactId=cxf -Dversion=2.4.6 show`  
-or: `ant -Dartifact=org.apache.cxf:cxf:2.4.6 show`  
-or: `ant show -Dartifact=org.apache.struts:struts-core -DuseLatestVersion=1`
+or: `ant -DartifactId=org.apache.cxf:cxf:2.4.6 show`  
+or: `ant show -DartifactId=org.apache.struts:struts-core -DuseLatestVersion=1`
 
 
 end notes
