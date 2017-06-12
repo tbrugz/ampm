@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # ----------------------------------------------------------------------------
 # ENV vars:
@@ -10,6 +10,8 @@
 #     e.g. to debug:
 #       set AMPM_OPTS=-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000
 # ----------------------------------------------------------------------------
+
+set -o nounset
 
 JAVA_BIN=$(which java)
 ANT_BIN=$(which ant)
@@ -38,7 +40,8 @@ LOGGER="-logger org.apache.tools.ant.listener.AnsiColorLogger"
 #LOGGER="-logger org.apache.tools.ant.NoBannerLogger"
 
 # other opts
-AMPM_OPTS="$AMPM_OPTS -Dmaven.home=$M2_HOME"
+AMPM_OPTS="${AMPM_OPTS:-} -Dmaven.home=$M2_HOME"
+UNKNOWN_OPTS=""
 
 ACTION=""
 ARGS=""
@@ -72,16 +75,18 @@ while (( "$#" )); do
   elif [ "$arg" = "list" ] && [ "$ACTION" = "" ]; then
     ACTION="$arg"
     ARGS="$ARGS -DgroupId=$2"
-    if [ "$3" ]; then
-      ARGS="$ARGS  -DartifactId=$3"
+    ARTIFACT="${3:-}"
+    if [ "$ARTIFACT" ]; then
+      ARGS="$ARGS  -DartifactId=$ARTIFACT"
       shift
     fi
     shift
   elif [ "$arg" = "list-organizations" ] && [ "$ACTION" = "" ]; then
     ACTION="$arg"
     ARGS="$ARGS -DgroupId=$2"
-    if [ "$3" ]; then
-      ARGS="$ARGS  -DartifactId=$3"
+    ARTIFACT="${3:-}"
+    if [ "$ARTIFACT" ]; then
+      ARGS="$ARGS -DartifactId=$ARTIFACT"
       shift
     fi
     shift
@@ -93,10 +98,10 @@ while (( "$#" )); do
     else
       ARGS="$ARGS -Dversion=$4"
     fi
-    if [ "$5" = "-class" ]; then
-      ARGS="$ARGS -Dmainclass=$6"
-      shift ; shift
-    fi
+    #if [ "$5" = "-class" ]; then
+    #  ARGS="$ARGS -Dmainclass=$6"
+    #  shift ; shift
+    #fi
     shift ; shift ; shift
   elif [ "$arg" = "run" ] && [ "$ACTION" = "" ]; then
     ACTION="$arg"
@@ -106,10 +111,10 @@ while (( "$#" )); do
     else
       ARGS="$ARGS -Dversion=$4"
     fi
-    if [ "$5" = "-class" ]; then
-      ARGS="$ARGS -Dmainclass=$6"
-      shift ; shift
-    fi
+    #if [ "$5" = "-class" ]; then
+    #  ARGS="$ARGS -Dmainclass=$6"
+    #  shift ; shift
+    #fi
     shift ; shift ; shift
   elif [ "$arg" = "show" ] && [ "$ACTION" = "" ]; then
     ACTION="$arg"
@@ -135,7 +140,7 @@ while (( "$#" )); do
     #ARGS="$ARGS -Dargs=\"$arg"
     while (( "$#" )); do
       shift
-      z="$z $1"
+      z="$z ${1:-}"
     done
     ARGS="$ARGS -Dargs=\"$z\""
   else
@@ -166,6 +171,5 @@ if [ -z "$ACTION" ]; then
   exit 1
 fi
 
-# see shell examples: mvn, ant, gradlew: https://github.com/apache/groovy/blob/master/gradlew
 #exec $ANT_BIN $AMPM_OPTS -buildfile $PRG_DIR/$BUILD_FILENAME $LOGGER "$@"
 exec $ANT_BIN $AMPM_OPTS -buildfile $PRG_DIR/$BUILD_FILENAME $LOGGER $ARGS $ACTION

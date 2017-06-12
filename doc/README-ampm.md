@@ -25,9 +25,9 @@ Usage
 
 general-options:
 
-* VM options (starting with `-D`)
-  * `-Dmainclass=<mainclass>` - useful with *run* & *make-exec*
-  * `-Dclasspath=<extra classpath>`
+* VM system properties (starting with `-D`)
+  * `-Dmainclass=<mainclass>` - set class with `main()` method - useful with *run* & *make-exec*
+  * `-Dclasspath=<extra classpath>` - set extra classpath for *run* & *make-exec*
 
 actions/targets:
 
@@ -37,8 +37,8 @@ actions/targets:
 * **is-installed**          Tests if artifact is installed
 * **list**                  List artifacts in the local repo
 * **list-organizations**    List organizations with artifacts in the local repo
-* **make-exec**             Creates an executable script
-* **run**                   Executes the mainclass of an application
+* **make-exec**             Creates an executable script from an artifact
+* **run**                   Executes the mainclass of an application/artifact
 * **show**                  Show artifact info
 * **uninstall**             Uninstalls an artifact (not its dependencies)
 
@@ -56,9 +56,9 @@ target options/arguments (by option types):
  `show                  <org> <artf> [ <vers> | latest ]`  
  `uninstall             <org> <artf> [ <vers> | latest ]`
 
- `make-exec             <org> <artf> [ <vers> | latest ] [-class <mainclass>]`
+ `make-exec             <org> <artf> [ <vers> | latest ]`
 
- `run                   <org> <artf> [ <vers> | latest ] [-class <mainclass>] <arguments>`
+ `run                   <org> <artf> [ <vers> | latest ] <arguments>`
 
 
 Examples
@@ -84,7 +84,7 @@ or: `ant -DgroupId=org.eclipse.jetty -DartifactId=jetty-runner -Dversion=9.3.10.
 or: `ant -Dartifact=org.eclipse.jetty:jetty-runner:9.3.10.M0 install`
 
 Run jetty-runner (replace `<some-dir>`):  
-`ampm run org.eclipse.jetty jetty-runner 9.3.10.M0 -class org.eclipse.jetty.runner.Runner --port 8081 <some-dir>`  
+`ampm -Dmainclass=org.eclipse.jetty.runner.Runner run org.eclipse.jetty jetty-runner 9.3.10.M0 --port 8081 <some-dir>`  
 or: `ant -DgroupId=org.eclipse.jetty -DartifactId=jetty-runner -Dversion=9.3.10.M0 -Dmainclass=org.eclipse.jetty.runner.Runner -Dargs="--port 8081 <some-dir>" run`  
 (and navigate to `http://localhost:8081/`)
 
@@ -95,7 +95,7 @@ or: `ant -Dartifact=org.eclipse.jetty:jetty-runner:9.3.10.M0 -Dargs="--port 8081
 (and navigate to `http://localhost:8081/`)
 
 Create executable script:  
-`ampm make-exec org.eclipse.jetty jetty-runner 9.3.10.M0 org.eclipse.jetty.runner.Runner`  
+`ampm -Dmainclass=org.eclipse.jetty.runner.Runner make-exec org.eclipse.jetty jetty-runner 9.3.10.M0`  
 or: `ant -DgroupId=org.eclipse.jetty -DartifactId=jetty-runner -Dversion=9.3.10.M0 -Dmainclass=org.eclipse.jetty.runner.Runner make-exec`  
 or: `ant -DgroupId=org.eclipse.jetty -DartifactId=jetty-runner -Dversion=9.3.10.M0 make-exec`
 
@@ -120,7 +120,7 @@ Install calc:
 or: `ant -DgroupId=com.github.javadev -DartifactId=calc -Dversion=1.0 install`
 
 Run calc:  
-`ampm run com.github.javadev calc 1.0 -class com.github.calc.Calc`  
+`ampm -Dmainclass=com.github.calc.Calc run com.github.javadev calc 1.0`  
 or: `ampm run com.github.javadev calc 1.0`  
 or: `ant -DgroupId=com.github.javadev -DartifactId=calc -Dversion=1.0 -Dmainclass=com.github.calc.Calc run`  
 or: `ant -DgroupId=com.github.javadev -DartifactId=calc -Dversion=1.0 run`
@@ -134,15 +134,15 @@ Install sqlline:
 or: `ant -DgroupId=sqlline -DartifactId=sqlline -Dversion=1.1.9 install`
 
 Run sqlline (using extra `classpath` - replace `<dir-with-drivers-jars>`):  
-`ampm -Dclasspath=<dir-with-drivers-jars>/* run sqlline sqlline 1.1.9 -class sqlline.SqlLine`  
+`ampm -Dmainclass=sqlline.SqlLine -Dclasspath=<dir-with-drivers-jars>/* run sqlline sqlline 1.1.9`  
 or: `ant -DgroupId=sqlline -DartifactId=sqlline -Dversion=1.1.9 -Dmainclass=sqlline.SqlLine -Dclasspath=<dir-with-drivers-jars>/* run`
 
 Create executable script (replace `<dir-with-drivers-jars>`):  
-`ampm -Dclasspath=<dir-with-drivers-jars>/* make-exec sqlline sqlline 1.1.9 -class sqlline.SqlLine`
+`ampm -Dmainclass=sqlline.SqlLine -Dclasspath=<dir-with-drivers-jars>/* make-exec sqlline sqlline 1.1.9`
 or: `ant -DgroupId=sqlline -DartifactId=sqlline -Dversion=1.1.9 -Dmainclass=sqlline.SqlLine -Dclasspath=<dir-with-drivers-jars>/* make-exec`
 
 Create executable script with name `sqlline.[sh|bat]` (replace `<dir-with-drivers-jars>`):  
-`ampm -Dclasspath=<dir-with-drivers-jars>/* -Dbase.script.file=sqlline make-exec sqlline sqlline 1.1.9 -class sqlline.SqlLine`
+`ampm -Dmainclass=sqlline.SqlLine -Dclasspath=<dir-with-drivers-jars>/* -Dbase.script.file=sqlline make-exec sqlline sqlline 1.1.9`
 or: `ant -DgroupId=sqlline -DartifactId=sqlline -Dversion=1.1.9 -Dmainclass=sqlline.SqlLine -Dclasspath=<dir-with-drivers-jars>/* -Dbase.script.file=sqlline make-exec`
 
 #### h2
@@ -163,7 +163,7 @@ or: `ant -DgroupId=com.h2database -DartifactId=h2 -Dversion=1.4.192 -Dargs="-tcp
 or (if `make-exec` already executed): `com.h2database.h2.1.4.192.sh -tcpPort 9095`
 
 Run h2 shell (make-exec & run using `exec.variant`):  
-`ampm -Dexec.variant=Shell make-exec com.h2database h2 1.4.192 -class org.h2.tools.Shell`  
+`ampm -Dmainclass=org.h2.tools.Shell -Dexec.variant=Shell make-exec com.h2database h2 1.4.192`  
 or: `ant -DgroupId=com.h2database -DartifactId=h2 -Dversion=1.4.192 -Dmainclass=org.h2.tools.Shell -Dexec.variant=Shell make-exec`  
 and: `com.h2database.h2.1.4.192.Shell.sh`
 
@@ -176,11 +176,11 @@ Install microemulator:
 or: `ant -DgroupId=org.microemu -DartifactId=microemu-javase-swing -Dversion=2.0.4 install`
 
 Run microemulator:  
-`ampm run org.microemu microemu-javase-swing 2.0.4 -class org.microemu.app.Main`  
+`ampm -Dmainclass=org.microemu.app.Main run org.microemu microemu-javase-swing 2.0.4`  
 or: `ant -DgroupId=org.microemu -DartifactId=microemu-javase-swing -Dversion=2.0.4 -Dmainclass=org.microemu.app.Main run`
 
 
-examples querying local repo (`~/.m2/repository` by default)
+Examples querying local repo (`~/.m2/repository` by default)
 ------
 
 List organizations:  
@@ -197,3 +197,7 @@ or: `ampm list` (list all artifacts)
 Show artifact details:  
 `ampm show org.apache.cxf cxf 2.4.6`  
 or: `ampm show org.apache.struts struts-core latest`
+
+Info (default environment variables):  
+`ampm info`  
+or: `ant info`

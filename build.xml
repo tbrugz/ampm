@@ -66,8 +66,8 @@
 		<echo message="maven.repo.remote: ${maven.repo.remote}"/>
 		<echo message="executables.dir: ${executables.dir}"/>
 
-		<echo message=""/>
-		<echo message="for main targets, run `ant -projecthelp`"/>
+		<!--echo message=""/>
+		<echo message="for main targets, run `ant -projecthelp`"/-->
 	</target>
 
 	<target name="install-maven-ant-tasks" depends="prepare">
