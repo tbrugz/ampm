@@ -1,0 +1,171 @@
+#!/bin/bash
+
+# ----------------------------------------------------------------------------
+# ENV vars:
+# ---------
+#   JAVA_HOME - location of a JDK home dir
+#   ANT_HOME - location of ant home dir
+#   M2_HOME - location of maven2's installed home dir
+#   AMPM_OPTS - parameters passed to the Java VM
+#     e.g. to debug:
+#       set AMPM_OPTS=-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000
+# ----------------------------------------------------------------------------
+
+JAVA_BIN=$(which java)
+ANT_BIN=$(which ant)
+M2_BIN=$(which mvn)
+PRG=$0
+PRG_DIR=$(dirname "$PRG")
+BUILD_FILENAME=build.xml
+
+if [ -z "$JAVA_HOME" ] ; then
+  JAVA_HOME=$(dirname $(readlink -f $JAVA_BIN))/../..
+fi
+
+if [ -z "$ANT_HOME" ] ; then
+  ANT_HOME=$(dirname $(readlink -f $ANT_BIN))/..
+else
+  ANT_BIN=$ANT_HOME/bin/ant
+fi
+
+if [ -z "$M2_HOME" ] ; then
+  M2_HOME=$(dirname $(readlink -f $M2_BIN))/..
+fi
+
+# https://ant.apache.org/manual/listeners.html
+LOGGER="-logger org.apache.tools.ant.listener.AnsiColorLogger"
+#LOGGER="-logger org.apache.tools.ant.listener.SimpleBigProjectLogger"
+#LOGGER="-logger org.apache.tools.ant.NoBannerLogger"
+
+# other opts
+AMPM_OPTS="$AMPM_OPTS -Dmaven.home=$M2_HOME"
+
+ACTION=""
+ARGS=""
+#for arg in "$@" ; do
+while (( "$#" )); do
+  arg="$1"
+  if [ "$arg" = "check-latest-version" ] && [ "$ACTION" = "" ]; then
+    ACTION="$arg";
+    ARGS="$ARGS -DgroupId=$2 -DartifactId=$3"
+    shift ; shift
+  elif [ "$arg" = "info" ] && [ "$ACTION" = "" ]; then
+    ACTION="$arg"
+  elif [ "$arg" = "install" ] && [ "$ACTION" = "" ]; then
+    ACTION="$arg"
+    ARGS="$ARGS -DgroupId=$2 -DartifactId=$3"
+    if [ "$4" = "latest" ]; then
+      ARGS="$ARGS -DuseLatestVersion=1"
+    else
+      ARGS="$ARGS -Dversion=$4"
+    fi
+    shift ; shift ; shift
+  elif [ "$arg" = "is-installed" ] && [ "$ACTION" = "" ]; then
+    ACTION="$arg"
+    ARGS="$ARGS -DgroupId=$2 -DartifactId=$3"
+    if [ "$4" = "latest" ]; then
+      ARGS="$ARGS -DuseLatestVersion=1"
+    else
+      ARGS="$ARGS -Dversion=$4"
+    fi
+    shift ; shift ; shift
+  elif [ "$arg" = "list" ] && [ "$ACTION" = "" ]; then
+    ACTION="$arg"
+    ARGS="$ARGS -DgroupId=$2"
+    if [ "$3" ]; then
+      ARGS="$ARGS  -DartifactId=$3"
+      shift
+    fi
+    shift
+  elif [ "$arg" = "list-organizations" ] && [ "$ACTION" = "" ]; then
+    ACTION="$arg"
+    ARGS="$ARGS -DgroupId=$2"
+    if [ "$3" ]; then
+      ARGS="$ARGS  -DartifactId=$3"
+      shift
+    fi
+    shift
+  elif [ "$arg" = "make-exec" ] && [ "$ACTION" = "" ]; then
+    ACTION="$arg"
+    ARGS="$ARGS -DgroupId=$2 -DartifactId=$3"
+    if [ "$4" = "latest" ]; then
+      ARGS="$ARGS -DuseLatestVersion=1"
+    else
+      ARGS="$ARGS -Dversion=$4"
+    fi
+    if [ "$5" = "-class" ]; then
+      ARGS="$ARGS -Dmainclass=$6"
+      shift ; shift
+    fi
+    shift ; shift ; shift
+  elif [ "$arg" = "run" ] && [ "$ACTION" = "" ]; then
+    ACTION="$arg"
+    ARGS="$ARGS -DgroupId=$2 -DartifactId=$3"
+    if [ "$4" = "latest" ]; then
+      ARGS="$ARGS -DuseLatestVersion=1"
+    else
+      ARGS="$ARGS -Dversion=$4"
+    fi
+    if [ "$5" = "-class" ]; then
+      ARGS="$ARGS -Dmainclass=$6"
+      shift ; shift
+    fi
+    shift ; shift ; shift
+  elif [ "$arg" = "show" ] && [ "$ACTION" = "" ]; then
+    ACTION="$arg"
+    ARGS="$ARGS -DgroupId=$2 -DartifactId=$3"
+    if [ "$4" = "latest" ]; then
+      ARGS="$ARGS -DuseLatestVersion=1"
+    else
+      ARGS="$ARGS -Dversion=$4"
+    fi
+    shift ; shift ; shift
+  elif [ "$arg" = "uninstall" ] && [ "$ACTION" = "" ]; then
+    ACTION="$arg"
+    ARGS="$ARGS -DgroupId=$2 -DartifactId=$3"
+    if [ "$4" = "latest" ]; then
+      ARGS="$ARGS -DuseLatestVersion=1"
+    else
+      ARGS="$ARGS -Dversion=$4"
+    fi
+    shift ; shift ; shift
+  elif [ "$ACTION" ]; then
+    #ARGS="$ARGS -Dargs=\"$arg $@\""
+    z="$arg"
+    #ARGS="$ARGS -Dargs=\"$arg"
+    while (( "$#" )); do
+      shift
+      z="$z $1"
+    done
+    ARGS="$ARGS -Dargs=\"$z\""
+  else
+    if [[ $arg == "-D"* ]]; then
+      AMPM_OPTS="$AMPM_OPTS $arg"
+    else
+      #AMPM_OPTS="$AMPM_OPTS $arg"
+      UNKNOWN_OPTS="$UNKNOWN_OPTS $arg"
+    fi
+  fi
+  shift
+done
+
+# if debug...
+echo "JAVA_BIN = $JAVA_BIN ; JAVA_HOME = $JAVA_HOME"
+echo "ANT_BIN = $ANT_BIN ; ANT_HOME = $ANT_HOME"
+echo "M2_BIN = $M2_BIN ; M2_HOME = $M2_HOME"
+#echo "PRG = $PRG ; PRG_DIR = $PRG_DIR"
+echo "ACTION = $ACTION"
+echo "UNKNOWN_OPTS = $UNKNOWN_OPTS"
+#echo "ARGS = $ARGS [ $# ]"
+#echo "EXEC0 = $ANT_BIN $AMPM_OPTS -buildfile $PRG_DIR/$BUILD_FILENAME $LOGGER $@"
+echo "EXEC = $ANT_BIN $AMPM_OPTS -buildfile $PRG_DIR/$BUILD_FILENAME $LOGGER $ARGS $ACTION"
+echo "---===---"
+
+if [ -z "$ACTION" ]; then
+  echo "No known ACTION defined!"
+  exit 1
+fi
+
+# see shell examples: mvn, ant, gradlew: https://github.com/apache/groovy/blob/master/gradlew
+#exec $ANT_BIN $AMPM_OPTS -buildfile $PRG_DIR/$BUILD_FILENAME $LOGGER "$@"
+exec $ANT_BIN $AMPM_OPTS -buildfile $PRG_DIR/$BUILD_FILENAME $LOGGER $ARGS $ACTION
