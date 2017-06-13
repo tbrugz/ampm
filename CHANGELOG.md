@@ -2,6 +2,11 @@
 CHANGELOG
 =========
 
+### v0.4
+
+- [x] added `ampm` script
+
+
 ### v0.3.5
 
 - [x] use http://repo1.maven.org/maven2/[org]/[artifact]/maven-metadata.xml
