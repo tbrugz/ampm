@@ -16,6 +16,7 @@ mkdir -p $HOME/bin
 export AMPM_DIR=$(pwd)
 cp $AMPM_DIR/ampm $HOME/bin
 cp $AMPM_DIR/build.xml $HOME/bin
+ant install-maven-ant-tasks
 ```
 
 Usage
@@ -73,7 +74,7 @@ Test if jetty-runner is installed:
 `ampm is-installed org.eclipse.jetty jetty-runner 9.3.10.M0`  
 or: `ant -DgroupId=org.eclipse.jetty -DartifactId=jetty-runner -Dversion=9.3.10.M0 is-installed`
 
-Check latest version avaiable in central:
+Check latest version avaiable in central:  
 `ampm check-latest-version org.eclipse.jetty jetty-runner`  
 or: `ant -DgroupId=org.eclipse.jetty -DartifactId=jetty-runner check-latest-version`  
 or: `ant -Dartifact=org.eclipse.jetty:jetty-runner check-latest-version`
@@ -198,6 +199,6 @@ Show artifact details:
 `ampm show org.apache.cxf cxf 2.4.6`  
 or: `ampm show org.apache.struts struts-core latest`
 
-Info (default environment variables):  
+Info (show default environment variables):  
 `ampm info`  
 or: `ant info`

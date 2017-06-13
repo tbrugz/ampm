@@ -20,17 +20,17 @@ PRG=$0
 PRG_DIR=$(dirname "$PRG")
 BUILD_FILENAME=build.xml
 
-if [ -z "$JAVA_HOME" ] ; then
+if [ -z "${JAVA_HOME:-}" ] ; then
   JAVA_HOME=$(dirname $(readlink -f $JAVA_BIN))/../..
 fi
 
-if [ -z "$ANT_HOME" ] ; then
+if [ -z "${ANT_HOME:-}" ] ; then
   ANT_HOME=$(dirname $(readlink -f $ANT_BIN))/..
 else
   ANT_BIN=$ANT_HOME/bin/ant
 fi
 
-if [ -z "$M2_HOME" ] ; then
+if [ -z "${M2_HOME:-}" ] ; then
   M2_HOME=$(dirname $(readlink -f $M2_BIN))/..
 fi
 
