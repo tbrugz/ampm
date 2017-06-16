@@ -5,13 +5,13 @@ Install
 Clone repo
 
 ```
-git clone https://github.com/tbrugz/mvnrun.git mvnrun
+git clone https://github.com/tbrugz/ampm.git ampm
 ```
 
 Install AMPM on `$HOME/bin`
 
 ```
-cd mvnrun
+cd ampm
 mkdir -p $HOME/bin
 export AMPM_DIR=$(pwd)
 cp $AMPM_DIR/ampm $HOME/bin

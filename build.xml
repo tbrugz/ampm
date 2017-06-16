@@ -1,18 +1,18 @@
-<project name="mvnrun" basedir="." default="info"
+<project name="ampm" basedir="." default="info"
 	xmlns:artifact="antlib:org.apache.maven.artifact.ant"
 	xmlns:if="ant:if" xmlns:unless="ant:unless">
 	<!-- xmlns:ivy="antlib:org.apache.ivy.ant" -->
 
 	<property name="project.version" value="0.4-SNAPSHOT"/>
-	<!--property name="config.file" value=".mvnrun.properties"/-->
+	<!--property name="config.file" value=".ampm.properties"/-->
 
 	<!-- required by ant:if - https://ant.apache.org/manual/ifunless.html -->
 	<property name="ant.version.required" value="1.9.1" />
 
 	<echo message="${ant.project.name} - version ${project.version}"/>
 
-	<!--<property file="${user.dir}/.mvnrun.properties"/> ?? -->
-	<property file="${user.home}/.mvnrun.properties"/>
+	<!--<property file="${user.dir}/.ampm.properties"/> ?? -->
+	<property file="${user.home}/.ampm.properties"/>
 
 	<property environment="env"/>
 
@@ -219,7 +219,7 @@
 		<!-- TODO: extract mainclass from jar -->
 
 		<!-- java -Djava.ext.dirs="$M2_REPO"/sqlline/sqlline/1.1.9:"$M2_REPO"/jline/jline/2.10:/home/tbrugz/Desktop/java/jars-etc/libs-jdbc sqlline.SqlLine -->
-		<!-- mvnrun$ ant -DgroupId=sqlline -DartifactId=sqlline -Dversion=1.1.9 -Dmainclass=sqlline.SqlLine run -->
+		<!-- $ ant -DgroupId=sqlline -DartifactId=sqlline -Dversion=1.1.9 -Dmainclass=sqlline.SqlLine run -->
 		<!-- java -Djava.ext.dirs=$BINPATH sqlline.SqlLine "$@" -->
 		<!--<echo message="classpath: ${classpath}"/>-->
 		<java classpathref="exec.path" classname="${mainclass}" fork="true">

@@ -1,27 +1,27 @@
 
-mvnrun
+ampm
 ======
 
-**mvnrun** is a cli frontend to some package management tasks based on [maven](https://maven.apache.org/)
+**ampm** is a cli frontend to some package management tasks based on [maven](https://maven.apache.org/)
 repositories. Specially, you may use it to install, uninstall, check latest version,
 run & create executables for java artifacts.
 
 
-using mvnrun
+using ampm
 ------
 
 - depends on: java, maven, [ant](https://ant.apache.org/) (>=1.9.1)
 
-- clone this repo to some dir (`<mvnrun-dir>`)  
-  `git clone https://github.com/tbrugz/mvnrun.git <mvnrun-dir>`  
-  or just download [build.xml](https://raw.githubusercontent.com/tbrugz/mvnrun/master/build.xml) to `<mvnrun-dir>`
+- clone this repo to some dir (`<ampm-dir>`)  
+  `git clone https://github.com/tbrugz/ampm.git <ampm-dir>`  
+  or just download [build.xml](https://raw.githubusercontent.com/tbrugz/ampm/master/build.xml) to `<ampm-dir>`
 
 - download [Maven Ant Tasks](http://maven.apache.org/ant-tasks/) into `$HOME/.ant/lib`
   ([direct link](http://central.maven.org/maven2/org/apache/maven/maven-ant-tasks/2.1.3/maven-ant-tasks-2.1.3.jar))  
   e.g.: `curl -o $HOME/.ant/lib/maven-ant-tasks-2.1.3.jar http://central.maven.org/maven2/org/apache/maven/maven-ant-tasks/2.1.3/maven-ant-tasks-2.1.3.jar`  
-  or run (from `<mvnrun-dir>`): `ant install-maven-ant-tasks`
+  or run (from `<ampm-dir>`): `ant install-maven-ant-tasks`
 
-- run it (from `<mvnrun-dir>` for now)
+- run it (from `<ampm-dir>` for now)
 
 
 examples
